@@ -1,10 +1,11 @@
 
 import pandas as pd
 import numpy as np
+import seaborn as sns
 
-from distsamp.
-
-sqlContext = get_sql_context(master = None)
+from distsamp.server.api import get_server_api, get_sqlContext
+from distsamp.worker.api import get_worker_api
+from distsamp.model.api import get_model_api
 
 
 def make_data():
@@ -20,14 +21,14 @@ def make_data():
 
     return pd.concat([df_1, df_2])
 
-
 data = make_data()
 
 sns.distplot(data[data.name == "a"].x)
 sns.distplot(data[data.name == "b"].x)
 sns.distplot(data.x)
 
-sdf = sdf.repartition(2, "name")
+sqlContext = get_sqlContext()
+sdf = sqlContext.createDataFrame(data).repartition(2, "name")
 
 
 def run_worker(data):

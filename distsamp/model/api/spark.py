@@ -1,10 +1,7 @@
 import json
 import redis
-import pandas as pd
 
 from collections import namedtuple
-from distsamp.model.expectationpropagation import ExpectationPropagationModel
-from multiprocessing import Process
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 SERVERS = {}
