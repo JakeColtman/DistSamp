@@ -1,6 +1,6 @@
 import unittest
 
-from distsamp.server.expectationpropagation import ExpectationPropagationServer
+from distsamp.model.expectationpropagation import ExpectationPropagationServer
 from distsamp.distributions.gaussian import convert_to_natural_parameters, convert_to_expectation_parameters
 
 

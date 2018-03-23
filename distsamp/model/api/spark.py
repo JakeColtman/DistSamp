@@ -1,8 +1,13 @@
 import json
 import redis
+import pandas as pd
+
 from collections import namedtuple
+from distsamp.model.expectationpropagation import ExpectationPropagationModel
+from multiprocessing import Process
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
+SERVERS = {}
 
 
 def get_worker_ids(model_name):
@@ -42,26 +47,26 @@ def get_shared_state(model_name):
     return json.loads(r.get("{}:{}".format(model_name, "shared")))
 
 
-CombinerAPI = namedtuple("Combiner", ["get_worker_ids", "get_worker_state", "set_worker_state", "get_shared_state", "set_shared_state"])
+ModelAPI = namedtuple("ModelAPI", ["get_worker_ids", "get_worker_state", "set_worker_state", "get_shared_state", "set_shared_state"])
 
 
-def get_combiner_api(model_name):
-    return CombinerAPI(lambda: get_worker_ids(model_name),
-                       lambda worker_id: get_worker_state(model_name, worker_id),
-                       lambda worker_id, state: set_worker_state(model_name, worker_id, state),
-                       lambda: get_shared_state(model_name),
-                       lambda state: set_shared_state(model_name, state))
+def get_model_api(model_name):
+    return ModelAPI(lambda: get_worker_ids(model_name),
+                    lambda worker_id: get_worker_state(model_name, worker_id),
+                    lambda worker_id, state: set_worker_state(model_name, worker_id, state),
+                    lambda: get_shared_state(model_name),
+                    lambda state: set_shared_state(model_name, state))
 
 
 def register_model(model_name, prior):
     r = redis.StrictRedis(connection_pool=POOL)
     r.set("{}:workers".format(model_name), 0)
     set_prior(model_name, prior)
-    return get_combiner_api(model_name)
+    return get_model_api(model_name)
 
 
 def connect_to_model(model_name):
-    return get_combiner_api(get_combiner_api(model_name))
+    return get_model_api(model_name)
 
 
 def unregister_model(model_name):

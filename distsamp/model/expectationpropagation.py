@@ -1,13 +1,13 @@
 import numpy as np
 
-from distsamp.server.server import Server
+from distsamp.model.model import Model
 from distsamp.distributions.gaussian import convert_to_expectation_parameters, convert_to_natural_parameters
 
 
-class ExpectationPropagationServer(Server):
+class ExpectationPropagationModel(Model):
 
     def __init__(self, combiner_api):
-        Server.__init__(self, combiner_api)
+        Model.__init__(self, combiner_api)
 
     @staticmethod
     def updated_shared_state(worker_states):

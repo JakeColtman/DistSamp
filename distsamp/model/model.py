@@ -1,7 +1,7 @@
 import abc
 
 
-class Server:
+class Model:
 
     def __init__(self, server_api):
         self.api = server_api
