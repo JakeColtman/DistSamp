@@ -25,13 +25,14 @@ class Distribution:
     def __init__(self, mean=None, variance=None, eta=None, llambda=None):
         if eta is not None and mean is not None:
             self.mean, self.variance, self.eta, self.ll = mean, variance, eta, llambda
-        if eta is None:
+        elif eta is None:
             self.mean, self.variance = mean, variance
             self.eta, self.llambda = convert_to_natural_parameters(mean, variance)
-        if mean is None:
+        elif mean is None:
             self.eta, self.llambda = eta, llambda
             self.mean, self.variance = convert_to_expectation_parameters(eta, llambda)
         else:
+            print(mean, variance, eta, llambda)
             raise ValueError("Distribution requires either expectation or natural parameters")
 
     def __div__(self, other):
@@ -39,3 +40,13 @@ class Distribution:
 
     def __mul__(self, other):
         return Distribution(eta=self.eta + other.eta, llambda=self.llambda + other.llambda)
+
+    def __getitem__(self, item):
+        if item == "mean":
+            return self.mean
+        if item == "variance":
+            return self.variance
+        if item == "eta":
+            return self.eta
+        if item == "llambda":
+            return self.llambda

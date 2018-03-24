@@ -7,7 +7,7 @@ class State:
 
     def __init__(self, distributions):
         self.distributions = distributions
-        self.variables = set(self.keys())
+        self.variables = set(self.distributions.keys())
 
     def __div__(self, other):
         if self.variables != self.other.variables:
@@ -27,10 +27,14 @@ class State:
         return json.dump(message_dict)
 
 
+def parse_state_dictionary(message):
+    return {key: Distribution(**message[key]) for key in message}
+
+
 def parse_state(message_str):
 
     if message_str is None:
         return None
 
     message = json.loads(message_str)
-    return {key: Distribution(**message[key]) for key in message}
+    return parse_state_dictionary(message)

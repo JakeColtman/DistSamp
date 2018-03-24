@@ -3,8 +3,8 @@ import abc
 
 class Model:
 
-    def __init__(self, server_api):
-        self.api = server_api
+    def __init__(self, model_api):
+        self.api = model_api
 
     @abc.abstractmethod
     def updated_shared_state(self, worker_states):
