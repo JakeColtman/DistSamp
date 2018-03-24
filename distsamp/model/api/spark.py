@@ -1,7 +1,10 @@
+from collections import namedtuple
+
 import json
 import redis
 
-from collections import namedtuple
+from distsamp.distributions.state import parse_state
+
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 SERVERS = {}
@@ -16,32 +19,27 @@ def get_worker_ids(model_name):
 def get_worker_state(model_name, worker_id):
     r = redis.StrictRedis(connection_pool=POOL)
     message = r.get("{}:worker:{}".format(model_name, worker_id))
-    if message is None:
-        return None
-    else:
-        while isinstance(message, basestring):
-            message = json.loads(message)
-        return message
+    parse_state(message)
 
 
 def set_worker_state(model_name, worker_id, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.set("{}:shared:{}".format(model_name, worker_id), json.dumps(state))
+    r.set("{}:shared:{}".format(model_name, worker_id), str(state))
 
 
 def set_shared_state(model_name, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.set("{}:shared".format(model_name), json.dumps(state))
+    r.set("{}:shared".format(model_name), str(state))
 
 
 def set_prior(model_name, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.set("{}:worker:{}".format(model_name, 0), json.dumps(state))
+    r.set("{}:worker:{}".format(model_name, 0), str(state))
 
 
 def get_shared_state(model_name):
     r = redis.StrictRedis(connection_pool=POOL)
-    return json.loads(r.get("{}:{}".format(model_name, "shared")))
+    return parse_state(r.get("{}:{}".format(model_name, "shared")))
 
 
 ModelAPI = namedtuple("ModelAPI", ["get_worker_ids", "get_worker_state", "set_worker_state", "get_shared_state", "set_shared_state"])

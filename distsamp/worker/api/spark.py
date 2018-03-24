@@ -1,5 +1,7 @@
-import json
 import redis
+
+from distsamp.distributions.state import parse_state
+
 from collections import namedtuple
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
@@ -8,24 +10,18 @@ POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 def get_worker_state(model_name, worker_id):
     r = redis.StrictRedis(connection_pool=POOL)
     message = r.get("{}:shared:{}".format(model_name, worker_id))
-    if message is None:
-        return None
-    else:
-        return json.loads(message)
+    return parse_state(message)
 
 
 def get_shared_state(model_name):
     r = redis.StrictRedis(connection_pool=POOL)
     message = r.get("{}:shared".format(model_name))
-    if message is None:
-        return None
-    else:
-        return json.loads(message)
+    return parse_state(message)
 
 
 def set_worker_state(model_name, worker_id, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.set("{}:worker:{}".format(model_name, worker_id), json.dumps(state))
+    r.set("{}:worker:{}".format(model_name, worker_id), str(state))
 
 
 WorkerAPI = namedtuple("WorkerAPI", ["get_worker_state", "get_shared_state", "set_worker_state"])
