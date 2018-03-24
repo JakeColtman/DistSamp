@@ -19,7 +19,7 @@ def get_worker_ids(model_name):
 def get_worker_state(model_name, worker_id):
     r = redis.StrictRedis(connection_pool=POOL)
     message = r.get("{}:worker:{}".format(model_name, worker_id))
-    parse_state(message)
+    return parse_state(message)
 
 
 def set_worker_state(model_name, worker_id, state):

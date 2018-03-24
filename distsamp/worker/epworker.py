@@ -9,7 +9,10 @@ class EPWorker:
         for _ in range(5):
             shared_state = self.api.get_shared_state()
             own_state = self.api.get_worker_state()
-            cavity = shared_state / own_state
+            if own_state is None:
+                cavity = shared_state
+            else:
+                cavity = shared_state / own_state
             updated_state = self.f_run(data, cavity)
             own_updated_state = updated_state / cavity
             self.api.set_worker_state(own_updated_state)

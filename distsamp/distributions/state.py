@@ -10,8 +10,8 @@ class State:
         self.variables = set(self.distributions.keys())
 
     def __div__(self, other):
-        if self.variables != self.other.variables:
-            raise ValueError("State operations only valid with matching variables, found: {}, expected: {}".format(self.other.variables, self.variables))
+        if self.variables != other.variables:
+            raise ValueError("State operations only valid with matching variables, found: {}, expected: {}".format(other.variables, self.variables))
 
         new_distributions = {}
         for variable in self.variables:
@@ -19,16 +19,26 @@ class State:
 
         return State(new_distributions)
 
+    def __mul__(self, other):
+        if self.variables != other.variables:
+            raise ValueError("State operations only valid with matching variables, found: {}, expected: {}".format(other.variables, self.variables))
+
+        new_distributions = {}
+        for variable in self.variables:
+            new_distributions[variable] = self.distributions[variable] * other.distributions[variable]
+
+        return State(new_distributions)
+
     def __getitem__(self, item):
         return self.distributions[item]
 
     def __str__(self):
-        message_dict = {key: {"mean": self[key].mean, "variance": self[key].variance} for key in self.variables}
-        return json.dump(message_dict)
+        message_dict = {key: self.distributions[key].to_dict() for key in self.variables}
+        return json.dumps(message_dict)
 
 
 def parse_state_dictionary(message):
-    return {key: Distribution(**message[key]) for key in message}
+    return State({key: Distribution(**message[key]) for key in message})
 
 
 def parse_state(message_str):

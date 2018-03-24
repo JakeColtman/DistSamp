@@ -25,17 +25,21 @@ def get_sqlContext():
 
 
 def run_job(sqlContext, server):
-    def loop():
+    def loop(data):
         server.run()
 
-    sdf = sqlContext.registerDataFrame(pd.DataFrame({"a": [1]}))
-    sqlContext.runJob(sdf, loop)
+    sdf = sqlContext.createDataFrame(pd.DataFrame({"a": [1]})).rdd.repartition(1)
+    sqlContext._sc.runJob(sdf, loop)
 
 
 def add_server(sqlContext, model_name, prior):
     s_api = register_model(model_name, prior)
     server = ExpectationPropagationModel(s_api)
     SERVERS[model_name] = {"api": s_api, "process": Process(target=run_job, args=(sqlContext, server,))}
+
+
+def get_server(model_name):
+    return SERVERS[model_name]
 
 
 def start_server(model_name):
@@ -50,7 +54,7 @@ def clear_server(model_name):
     unregister_model(model_name)
 
 
-ServerAPI = namedtuple("ServerAPI", ["add_server", "start_server", "stop_server", "clear_server"])
+ServerAPI = namedtuple("ServerAPI", ["add_server", "get_server", "start_server", "stop_server", "clear_server"])
 
 
 def get_server_api(sqlContext = None):
@@ -59,6 +63,7 @@ def get_server_api(sqlContext = None):
         sqlContext = get_sqlContext()
 
     return ServerAPI(lambda model_name, prior: add_server(sqlContext, model_name, prior),
+                     lambda model_name: get_server(model_name),
                      lambda model_name: start_server(model_name),
                      lambda model_name: stop_server(model_name),
                      lambda model_name: clear_server(model_name))

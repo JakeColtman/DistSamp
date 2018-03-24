@@ -20,11 +20,11 @@ def cavity_distribution(full_distribution, site_distribution):
     return {"mean": mu, "variance": var}
 
 
-class Distribution:
+class Distribution(object):
 
     def __init__(self, mean=None, variance=None, eta=None, llambda=None):
         if eta is not None and mean is not None:
-            self.mean, self.variance, self.eta, self.ll = mean, variance, eta, llambda
+            self.mean, self.variance, self.eta, self.llambda = mean, variance, eta, llambda
         elif eta is None:
             self.mean, self.variance = mean, variance
             self.eta, self.llambda = convert_to_natural_parameters(mean, variance)
@@ -41,12 +41,5 @@ class Distribution:
     def __mul__(self, other):
         return Distribution(eta=self.eta + other.eta, llambda=self.llambda + other.llambda)
 
-    def __getitem__(self, item):
-        if item == "mean":
-            return self.mean
-        if item == "variance":
-            return self.variance
-        if item == "eta":
-            return self.eta
-        if item == "llambda":
-            return self.llambda
+    def to_dict(self):
+        return vars(self)
