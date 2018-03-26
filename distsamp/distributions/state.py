@@ -46,5 +46,9 @@ def parse_state(message_str):
     if message_str is None:
         return None
 
-    message = json.loads(message_str)
+    try:
+        message = json.loads(message_str)
+    except:
+        print("Failed on, ", message_str)
+        return None
     return parse_state_dictionary(message)
