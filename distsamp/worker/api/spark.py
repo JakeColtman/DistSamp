@@ -7,15 +7,16 @@ from collections import namedtuple
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
 
-def get_worker_state(model_name, worker_id):
-    r = redis.StrictRedis(connection_pool=POOL)
-    message = r.get("{}:shared:{}".format(model_name, worker_id))
-    return parse_state(message)
-
-
 def get_shared_state(model_name):
     r = redis.StrictRedis(connection_pool=POOL)
-    message = r.get("{}:shared".format(model_name))
+    return parse_state(r.get("{}:{}".format(model_name, "shared")))
+
+
+def get_worker_cavity(model_name, worker_id):
+    r = redis.StrictRedis(connection_pool=POOL)
+    message = r.get("{}:cavity:{}".format(model_name, worker_id))
+    if message is None:
+        return get_shared_state(model_name)
     return parse_state(message)
 
 
@@ -24,12 +25,11 @@ def set_worker_state(model_name, worker_id, state):
     r.set("{}:worker:{}".format(model_name, worker_id), str(state))
 
 
-WorkerAPI = namedtuple("WorkerAPI", ["get_worker_state", "get_shared_state", "set_worker_state"])
+WorkerAPI = namedtuple("WorkerAPI", ["get_worker_cavity", "set_worker_state"])
 
 
 def get_worker_api(model_name, worker_id):
-    return WorkerAPI(lambda: get_worker_state(model_name, worker_id),
-                     lambda: get_shared_state(model_name),
+    return WorkerAPI(lambda: get_worker_cavity(model_name, worker_id),
                      lambda state: set_worker_state(model_name, worker_id, state))
 
 

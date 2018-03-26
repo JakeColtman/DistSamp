@@ -18,4 +18,10 @@ class Model:
             updated_state = self.updated_shared_state(worker_states)
             self.api.set_shared_state(updated_state)
             for w_id, w_state in worker_states.items():
-                self.api.set_worker_state(w_id, w_state)
+                if w_id == 0:
+                    continue
+                if w_state is None:
+                    self.api.set_worker_cavity(w_id, updated_state)
+                else:
+                    worker_cavity = updated_state / w_state
+                    self.api.set_worker_cavity(w_id, worker_cavity)

@@ -22,9 +22,9 @@ def get_worker_state(model_name, worker_id):
     return parse_state(message)
 
 
-def set_worker_state(model_name, worker_id, state):
+def set_worker_cavity(model_name, worker_id, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.set("{}:shared:{}".format(model_name, worker_id), str(state))
+    r.set("{}:cavity:{}".format(model_name, worker_id), str(state))
 
 
 def set_shared_state(model_name, state):
@@ -42,13 +42,13 @@ def get_shared_state(model_name):
     return parse_state(r.get("{}:{}".format(model_name, "shared")))
 
 
-ModelAPI = namedtuple("ModelAPI", ["get_worker_ids", "get_worker_state", "set_worker_state", "get_shared_state", "set_shared_state"])
+ModelAPI = namedtuple("ModelAPI", ["get_worker_ids", "get_worker_state", "set_worker_cavity", "get_shared_state", "set_shared_state"])
 
 
 def get_model_api(model_name):
     return ModelAPI(lambda: get_worker_ids(model_name),
                     lambda worker_id: get_worker_state(model_name, worker_id),
-                    lambda worker_id, state: set_worker_state(model_name, worker_id, state),
+                    lambda worker_id, state: set_worker_cavity(model_name, worker_id, state),
                     lambda: get_shared_state(model_name),
                     lambda state: set_shared_state(model_name, state))
 
