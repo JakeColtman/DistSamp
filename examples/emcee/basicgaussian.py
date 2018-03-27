@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 
-from distsamp.server.api import get_server_api, get_sqlContext
+from distsamp.modeells.api import get_server_api, get_sqlContext
 from distsamp.worker.api import get_worker_api
-from distsamp.model.api import get_model_api
+from distsamp.server.api import get_model_api
 
 
 def make_data():

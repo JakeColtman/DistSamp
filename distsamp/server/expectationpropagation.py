@@ -1,13 +1,13 @@
-from distsamp.model.model import Model
+from distsamp.server.server import Server
 import operator
 
 from functools import reduce
 
 
-class ExpectationPropagationModel(Model):
+class ExpectationPropagationServer(Server):
 
     def __init__(self, combiner_api):
-        Model.__init__(self, combiner_api)
+        Server.__init__(self, combiner_api)
 
     def updated_shared_state(self, worker_states):
         worker_ids = set(worker_states.keys())

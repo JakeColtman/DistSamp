@@ -1,7 +1,7 @@
 import abc
 
 
-class Model:
+class Server:
 
     def __init__(self, model_api):
         self.api = model_api
@@ -11,7 +11,7 @@ class Model:
         pass
 
     def run(self):
-        print("Monitoring model")
+        print("Monitoring server")
         while True:
             worker_ids = self.api.get_worker_ids()
             worker_states = {w_id: self.api.get_worker_state(w_id) for w_id in worker_ids}

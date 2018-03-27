@@ -1,69 +1,70 @@
-import os
-import redis
-import pandas as pd
-
 from collections import namedtuple
-from distsamp.model.expectationpropagation import ExpectationPropagationModel
-from distsamp.model.api.spark import register_model, unregister_model
-from multiprocessing import Process
+
+import json
+import redis
+
+from distsamp.distributions.state import parse_state
+
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 SERVERS = {}
 
 
-def get_sqlContext():
-    import findspark
-    python_path = os.environ.get('PYSPARK_PYTHON', None)
-    findspark.init(python_path=python_path)
-    from pyspark.sql import SparkSession, SQLContext
-    from pyspark import SparkConf
-    conf = SparkConf()
-    builder = SparkSession.builder.enableHiveSupport().config(conf=conf)
-    session = builder.getOrCreate()
-    _sc = session.sparkContext
-    return SQLContext(_sc, sparkSession=session)
+def get_worker_ids(server_name):
+    r = redis.StrictRedis(connection_pool=POOL)
+    max_id = json.loads(r.get("{}:{}".format(server_name, "workers")))
+    return range(0, max_id + 1)
 
 
-def run_job(sqlContext, server):
-    def loop(data):
-        server.run()
-
-    sdf = sqlContext.createDataFrame(pd.DataFrame({"a": [1]})).rdd.repartition(1)
-    sqlContext._sc.runJob(sdf, loop)
+def get_worker_state(server_name, worker_id):
+    r = redis.StrictRedis(connection_pool=POOL)
+    message = r.get("{}:worker:{}".format(server_name, worker_id))
+    return parse_state(message)
 
 
-def add_server(sqlContext, model_name, prior):
-    s_api = register_model(model_name, prior)
-    server = ExpectationPropagationModel(s_api)
-    SERVERS[model_name] = {"api": s_api, "process": Process(target=run_job, args=(sqlContext, server,))}
+def set_worker_cavity(server_name, worker_id, state):
+    r = redis.StrictRedis(connection_pool=POOL)
+    r.set("{}:cavity:{}".format(server_name, worker_id), str(state))
 
 
-def get_server(model_name):
-    return SERVERS[model_name]
+def set_shared_state(server_name, state):
+    r = redis.StrictRedis(connection_pool=POOL)
+    r.set("{}:shared".format(server_name), str(state))
 
 
-def start_server(model_name):
-    SERVERS[model_name]["process"].start()
+def set_prior(server_name, state):
+    r = redis.StrictRedis(connection_pool=POOL)
+    r.set("{}:worker:{}".format(server_name, 0), str(state))
 
 
-def stop_server(model_name):
-    SERVERS[model_name]["process"].terminate()
+def get_shared_state(server_name):
+    r = redis.StrictRedis(connection_pool=POOL)
+    return parse_state(r.get("{}:{}".format(server_name, "shared")))
 
 
-def clear_server(model_name):
-    unregister_model(model_name)
+ServerAPI = namedtuple("ServerAPI", ["get_worker_ids", "get_worker_state", "set_worker_cavity", "get_shared_state", "set_shared_state"])
 
 
-ServerAPI = namedtuple("ServerAPI", ["add_server", "get_server", "start_server", "stop_server", "clear_server"])
+def get_server_api(server_name):
+    return ServerAPI(lambda: get_worker_ids(server_name),
+                     lambda worker_id: get_worker_state(server_name, worker_id),
+                     lambda worker_id, state: set_worker_cavity(server_name, worker_id, state),
+                     lambda: get_shared_state(server_name),
+                     lambda state: set_shared_state(server_name, state))
 
 
-def get_server_api(sqlContext = None):
+def register_server(server_name, prior):
+    r = redis.StrictRedis(connection_pool=POOL)
+    r.set("{}:workers".format(server_name), 0)
+    set_prior(server_name, prior)
+    return get_server_api(server_name)
 
-    if sqlContext is None:
-        sqlContext = get_sqlContext()
 
-    return ServerAPI(lambda model_name, prior: add_server(sqlContext, model_name, prior),
-                     lambda model_name: get_server(model_name),
-                     lambda model_name: start_server(model_name),
-                     lambda model_name: stop_server(model_name),
-                     lambda model_name: clear_server(model_name))
+def connect_to_server(server_name):
+    return get_server_api(server_name)
+
+
+def unregister_server(server_name):
+    r = redis.StrictRedis(connection_pool=POOL)
+    for key in r.scan_iter("{}:*".format(server_name)):
+        r.delete(key)
