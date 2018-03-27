@@ -1,7 +1,7 @@
 import unittest
 
-from distsamp.server.expectationpropagation import ExpectationPropagationServer
-from distsamp.distributions.gaussian import convert_to_natural_parameters, convert_to_expectation_parameters
+from distsamp.server.server import Server
+from distsamp.distributions.distribution import convert_to_natural_parameters, convert_to_expectation_parameters
 
 
 class ExpectationPropagationServerTest(unittest.TestCase):
@@ -22,7 +22,7 @@ class ExpectationPropagationServerTest(unittest.TestCase):
 
         worker_states = {0: prior, 1: observation}
 
-        runner = ExpectationPropagationServer.updated_shared_state(worker_states)
+        runner = Server.updated_shared_state(worker_states)
 
         self.assertEqual(true_updated_mean, runner["alpha"]["mean"])
         self.assertEqual(true_updated_variance, runner["alpha"]["variance"])
