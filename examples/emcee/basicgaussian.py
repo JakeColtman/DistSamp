@@ -3,9 +3,8 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 
-from distsamp.model.api import get_server_api, get_sqlContext
+from distsamp.model.api import get_model_api, get_sqlContext
 from distsamp.worker.api import get_worker_api
-from distsamp.server.api import get_model_api
 
 
 def make_data():
@@ -64,11 +63,11 @@ def run_worker(data):
         return state
 
     from distsamp.worker.api import register_worker
-    from distsamp.worker.epworker import EPWorker
+    from distsamp.worker.worker import Worker
 
     data = [float(r["x"]) for r in data]
 
     w_api = register_worker("big_gaussian")
-    worker = EPWorker(w_api, run_model)
+    worker = Worker(w_api, run_model)
     for x in worker.run(data):
         yield x

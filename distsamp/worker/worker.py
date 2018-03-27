@@ -1,5 +1,5 @@
 
-class EPWorker:
+class Worker:
     """
     Encapsulates a site in the overall likihood function
     Handles the process of coordinating with the server and approximating the tilted distribution
