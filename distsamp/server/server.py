@@ -1,14 +1,28 @@
-import abc
+from functools import reduce
+import operator
 
 
 class Server:
+    """
+    Encapsulates the posterior server, the component which combines the information from the sites together
+    Responsible for:
+        - Maintaining an approximation to the global likihood
+        - Calculating the site cavities
+    """
 
     def __init__(self, model_api):
         self.api = model_api
 
-    @abc.abstractmethod
-    def updated_shared_state(self, worker_states):
-        pass
+    @staticmethod
+    def updated_shared_state(worker_states):
+        worker_ids = set(worker_states.keys())
+
+        if len(worker_states) == 0 or 0 not in worker_ids:
+            return
+
+        worker_states = {x for x in worker_states.values() if x is not None}
+
+        return reduce(operator.mul, worker_states)
 
     def run(self):
         print("Monitoring server")

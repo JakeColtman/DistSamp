@@ -1,5 +1,4 @@
-from distutils.core import setup
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(name='distsamp',
       version='1.0',
