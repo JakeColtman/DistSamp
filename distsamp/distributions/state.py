@@ -36,6 +36,9 @@ class State:
         message_dict = {key: self.distributions[key].to_dict() for key in self.variables}
         return json.dumps(message_dict)
 
+    def __repr__(self):
+        return self.__str__()
+
 
 def parse_state_dictionary(message):
     return State({key: Distribution(**message[key]) for key in message})
