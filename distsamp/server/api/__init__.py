@@ -1,1 +1,1 @@
-from distsamp.server.api.spark import get_model_api
+from distsamp.server.api.spark import register_server, unregister_server, connect_to_server
