@@ -1,6 +1,8 @@
 from functools import reduce
 import operator
 
+from distsamp.server.api.spark import ServerAPI
+
 
 class Server:
     """
@@ -10,8 +12,8 @@ class Server:
         - Calculating the site cavities
     """
 
-    def __init__(self, server_api):
-        self.api = server_api
+    def __init__(self, api: ServerAPI):
+        self.api = api
 
     @staticmethod
     def updated_shared_state(worker_states):

@@ -1,3 +1,8 @@
+from typing import Callable, Iterable
+
+from distsamp.distributions.state import State
+from distsamp.worker.api.spark import WorkerAPI
+
 
 class Worker:
     """
@@ -6,14 +11,14 @@ class Worker:
 
     Attributes
     ---------
-    worker_api: distsamp.worker.api.spark.WorkerAPI
+    api: distsamp.worker.api.spark.WorkerAPI
                 API to allow the worker to interact with the rest of the system
     f_run: (data, cavity) -> distribution
            Method to produce an approximation to the tilted distribution.
            Returns the _site_ approximation, not the whole likihood
     """
-    def __init__(self, worker_api, f_run):
-        self.api = worker_api
+    def __init__(self, api: WorkerAPI, f_run: Callable[[Iterable, State], State]):
+        self.api = api
         self.f_run = f_run
 
     def run(self, data):

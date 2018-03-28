@@ -1,23 +1,15 @@
+from typing import Mapping
 
-
-def convert_to_natural_parameters(mean, variance):
+def convert_to_natural_parameters(mean: float, variance: float):
     l = 1.0 / variance
     e = l * mean
     return e, l
 
 
-def convert_to_expectation_parameters(eta, llambda):
+def convert_to_expectation_parameters(eta: float, llambda: float):
     variance = 1.0 / llambda
     mean = eta / llambda
     return mean, variance
-
-
-def cavity_distribution(full_distribution, site_distribution):
-    full_eta, full_lambda = convert_to_natural_parameters(**full_distribution)
-    site_eta, site_ll = convert_to_natural_parameters(**site_distribution)
-
-    mu, var = convert_to_expectation_parameters(full_eta - site_eta, full_lambda - site_ll)
-    return {"mean": mu, "variance": var}
 
 
 class Distribution(object):
@@ -41,5 +33,5 @@ class Distribution(object):
     def __mul__(self, other):
         return Distribution(eta=self.eta + other.eta, llambda=self.llambda + other.llambda)
 
-    def to_dict(self):
+    def to_dict(self) -> Mapping[str, Mapping[str, float]]:
         return vars(self)
