@@ -67,3 +67,8 @@ def get_model_api(sqlContext=None):
                     lambda model_name: start_model(model_name),
                     lambda model_name: stop_model(model_name),
                     lambda model_name: clear_model(model_name))
+
+
+def set_prior(model_name, state):
+    r = redis.StrictRedis(connection_pool=POOL)
+    r.set("{}:worker:{}".format(model_name, 0), str(state))

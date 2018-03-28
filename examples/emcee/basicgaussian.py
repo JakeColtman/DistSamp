@@ -13,6 +13,7 @@ def make_data():
 
     return pd.concat([df_1, df_2])
 
+
 def run_worker(data):
 
     import numpy as np
@@ -51,14 +52,12 @@ def run_worker(data):
     from distsamp.worker.api.spark import register_worker
     from distsamp.worker.worker import Worker
 
-
     data = [float(r["x"]) for r in data]
 
     w_api = register_worker("BasicGaussian")
     worker = Worker(w_api, run_model)
     for x in worker.run(data):
         yield x
-
 
 
 if __name__ == "__main__":
@@ -68,16 +67,13 @@ if __name__ == "__main__":
     from matplotlib import pyplot as plt
 
     from distsamp.distributions.state import parse_state_dictionary
-    from distsamp.model.api import get_sqlContext
-    from distsamp.model.api.spark import add_model, clear_model, get_model, start_model
+    from distsamp.model.api.spark import set_prior
+
+    model_name = "BigGaussian"
 
     prior = parse_state_dictionary({"theta": {"mean": 10.0, "variance": 100.0}})
+    set_prior(model_name, prior)
 
-    clear_model("BasicGaussian")
-    add_model(sqlContext, "BasicGaussian", prior)
-    start_model("BasicGaussian")
-    print("here")
-    model_api = get_model("BasicGaussian")
     data = make_data()
 
     sns.distplot(data[data.name == "a"].x)
@@ -85,4 +81,9 @@ if __name__ == "__main__":
 
     plt.show()
 
-    sns.distplot(np.random.normal(model_api["api"].get_shared_state()["theta"].mean, 1.0, 1000))
+    ### Actually run the model
+
+    from distsamp.server.api.spark import connect_to_server
+    server_api = connect_to_server(model_name)
+
+    sns.distplot(np.random.normal(server_api.get_shared_state()["theta"].mean, 1.0, 1000))
