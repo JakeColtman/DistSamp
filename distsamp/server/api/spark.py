@@ -53,10 +53,9 @@ def get_server_api(server_name):
                      lambda state: set_shared_state(server_name, state))
 
 
-def register_server(server_name, prior):
+def register_server(server_name):
     r = redis.StrictRedis(connection_pool=POOL)
     r.set("{}:workers".format(server_name), 0)
-    set_prior(server_name, prior)
     return get_server_api(server_name)
 
 

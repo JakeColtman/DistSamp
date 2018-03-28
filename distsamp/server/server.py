@@ -10,14 +10,13 @@ class Server:
         - Calculating the site cavities
     """
 
-    def __init__(self, model_api):
-        self.api = model_api
+    def __init__(self, server_api):
+        self.api = server_api
 
     @staticmethod
     def updated_shared_state(worker_states):
-        worker_ids = set(worker_states.keys())
 
-        if len(worker_states) == 0 or 0 not in worker_ids:
+        if len(worker_states) == 0:
             return
 
         worker_states = {x for x in worker_states.values() if x is not None}
@@ -39,3 +38,18 @@ class Server:
                 else:
                     worker_cavity = updated_state / w_state
                     self.api.set_worker_cavity(w_id, worker_cavity)
+
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Parse args")
+    parser.add_argument("model_name", type=str)
+    args = parser.parse_args()
+    model_name = args.model_name
+
+    from distsamp.server.api.spark import register_server
+
+    server_api = register_server(model_name)
+
+    server = Server(server_api)
+    server.run()
