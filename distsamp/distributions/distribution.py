@@ -1,5 +1,6 @@
 from typing import Mapping
 
+
 def convert_to_natural_parameters(mean: float, variance: float):
     l = 1.0 / variance
     e = l * mean
@@ -27,7 +28,7 @@ class Distribution(object):
             print(mean, variance, eta, llambda)
             raise ValueError("Distribution requires either expectation or natural parameters")
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         return Distribution(eta=self.eta - other.eta, llambda=self.llambda - other.llambda)
 
     def __mul__(self, other):

@@ -17,11 +17,10 @@ class Server:
 
     @staticmethod
     def updated_shared_state(worker_states):
+        worker_states = {x for x in worker_states.values() if x is not None}
 
         if len(worker_states) == 0:
             return
-
-        worker_states = {x for x in worker_states.values() if x is not None}
 
         return reduce(operator.mul, worker_states)
 

@@ -9,7 +9,7 @@ POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
 def get_shared_state(model_name):
     r = redis.StrictRedis(connection_pool=POOL)
-    return parse_state(r.get("{}:{}".format(model_name, "shared")))
+    return parse_state(r.get("{}:{}".format(model_name, "shared")).decode())
 
 
 def get_worker_cavity(model_name, worker_id):
@@ -17,7 +17,7 @@ def get_worker_cavity(model_name, worker_id):
     message = r.get("{}:cavity:{}".format(model_name, worker_id))
     if message is None:
         return get_shared_state(model_name)
-    return parse_state(message)
+    return parse_state(message.decode())
 
 
 def set_worker_state(model_name, worker_id, state):

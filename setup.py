@@ -8,5 +8,6 @@ setup(name='distsamp',
             "redis",
             "emcee",
             "pandas",
+            "seaborn",
             "scipy"
       ])

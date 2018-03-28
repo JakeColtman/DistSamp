@@ -12,14 +12,17 @@ SERVERS = {}
 
 def get_worker_ids(server_name):
     r = redis.StrictRedis(connection_pool=POOL)
-    max_id = json.loads(r.get("{}:{}".format(server_name, "workers")))
+    max_id = json.loads(r.get("{}:{}".format(server_name, "workers")).decode())
     return range(0, max_id + 1)
 
 
 def get_worker_state(server_name, worker_id):
     r = redis.StrictRedis(connection_pool=POOL)
     message = r.get("{}:worker:{}".format(server_name, worker_id))
-    return parse_state(message)
+    if message is None:
+        return None
+    else:
+        return parse_state(message.decode())
 
 
 def set_worker_cavity(server_name, worker_id, state):
@@ -39,7 +42,11 @@ def set_prior(server_name, state):
 
 def get_shared_state(server_name):
     r = redis.StrictRedis(connection_pool=POOL)
-    return parse_state(r.get("{}:{}".format(server_name, "shared")))
+    state = r.get("{}:{}".format(server_name, "shared"))
+    if state is None:
+        return None
+    else:
+        return parse_state(state.decode())
 
 
 ServerAPI = namedtuple("ServerAPI", ["get_worker_ids", "get_worker_state", "set_worker_cavity", "get_shared_state", "set_shared_state"])

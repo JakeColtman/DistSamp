@@ -9,7 +9,7 @@ class State:
         self.distributions = distributions
         self.variables = set(self.distributions.keys())
 
-    def __div__(self, other: 'State'):
+    def __truediv__(self, other: 'State'):
         if self.variables != other.variables:
             raise ValueError("State operations only valid with matching variables, found: {}, expected: {}".format(other.variables, self.variables))
 
@@ -53,5 +53,5 @@ def parse_state(message_str: str):
         message = json.loads(message_str)
     except:
         print("Failed on, ", message_str)
-        return None
+        raise
     return parse_state_dictionary(message)
