@@ -37,3 +37,7 @@ def register_worker(model_name):
     r = redis.StrictRedis(connection_pool=POOL)
     worker_id = r.incr("{}:workers".format(model_name), 1)
     return get_worker_api(model_name, worker_id)
+
+
+def register_named_worker(model_name: str, worker_id: str):
+    return get_worker_api(model_name, worker_id)
