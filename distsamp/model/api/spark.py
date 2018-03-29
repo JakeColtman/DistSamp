@@ -16,5 +16,7 @@ def get_model_api(model_name):
     return ModelAPI(s_api, w_apis)
 
 
-def clear_model(model_api: ModelAPI) -> None:
-    pass
+def unregister_model(model_name):
+    r = redis.StrictRedis(connection_pool=POOL)
+    for key in r.scan_iter("{}:*".format(model_name)):
+        r.delete(key)

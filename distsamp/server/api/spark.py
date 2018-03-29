@@ -12,8 +12,8 @@ SERVERS = {}
 
 def get_worker_ids(server_name):
     r = redis.StrictRedis(connection_pool=POOL)
-    max_id = json.loads(r.get("{}:{}".format(server_name, "workers")).decode())
-    return range(0, max_id + 1)
+    worker_ids = r.smembers("{}:{}".format(server_name, "workers"))
+    return [x.decode() for x in worker_ids]
 
 
 def get_worker_state(server_name, worker_id):
@@ -58,19 +58,3 @@ def get_server_api(server_name):
                      lambda worker_id, state: set_worker_cavity(server_name, worker_id, state),
                      lambda: get_shared_state(server_name),
                      lambda state: set_shared_state(server_name, state))
-
-
-def register_server(server_name):
-    r = redis.StrictRedis(connection_pool=POOL)
-    r.set("{}:workers".format(server_name), 0)
-    return get_server_api(server_name)
-
-
-def connect_to_server(server_name):
-    return get_server_api(server_name)
-
-
-def unregister_server(server_name):
-    r = redis.StrictRedis(connection_pool=POOL)
-    for key in r.scan_iter("{}:*".format(server_name)):
-        r.delete(key)
