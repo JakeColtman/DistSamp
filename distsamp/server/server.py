@@ -24,21 +24,27 @@ class Server:
 
         return reduce(operator.mul, worker_states)
 
+    def store_updated_state(self, updated_state, worker_states):
+        self.api.set_shared_state(updated_state)
+        for w_id, w_state in worker_states.items():
+            if w_id == 0:
+                continue
+            if w_state is None:
+                self.api.set_worker_cavity(w_id, updated_state)
+            else:
+                worker_cavity = updated_state / w_state
+                self.api.set_worker_cavity(w_id, worker_cavity)
+
     def run(self):
         print("Monitoring server")
+        shared_state = self.api.get_shared_state()
         while True:
             worker_ids = self.api.get_worker_ids()
             worker_states = {w_id: self.api.get_worker_state(w_id) for w_id in worker_ids}
             updated_state = self.updated_shared_state(worker_states)
-            self.api.set_shared_state(updated_state)
-            for w_id, w_state in worker_states.items():
-                if w_id == 0:
-                    continue
-                if w_state is None:
-                    self.api.set_worker_cavity(w_id, updated_state)
-                else:
-                    worker_cavity = updated_state / w_state
-                    self.api.set_worker_cavity(w_id, worker_cavity)
+            if updated_state == shared_state:
+                continue
+            self.store_updated_state(updated_state, worker_states)
 
 
 if __name__ == "__main__":

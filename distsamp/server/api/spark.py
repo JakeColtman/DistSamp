@@ -1,6 +1,5 @@
 from collections import namedtuple
 
-import json
 import redis
 
 from distsamp.distributions.state import parse_state
@@ -27,12 +26,12 @@ def get_worker_state(server_name, worker_id):
 
 def set_worker_cavity(server_name, worker_id, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.set("{}:cavity:{}".format(server_name, worker_id), str(state))
+    r.lpush("{}:cavity:{}".format(server_name, worker_id), str(state))
 
 
 def set_shared_state(server_name, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.set("{}:shared".format(server_name), str(state))
+    r.lpush("{}:shared".format(server_name), str(state))
 
 
 def set_prior(server_name, state):
@@ -42,7 +41,7 @@ def set_prior(server_name, state):
 
 def get_shared_state(server_name):
     r = redis.StrictRedis(connection_pool=POOL)
-    state = r.get("{}:{}".format(server_name, "shared"))
+    state = r.lindex("{}:{}".format(server_name, "shared"), 0)
     if state is None:
         return None
     else:

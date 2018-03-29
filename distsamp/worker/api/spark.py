@@ -14,7 +14,7 @@ def get_shared_state(model_name):
 
 def get_worker_cavity(model_name, worker_id):
     r = redis.StrictRedis(connection_pool=POOL)
-    message = r.get("{}:cavity:{}".format(model_name, worker_id))
+    message = r.lindex("{}:cavity:{}".format(model_name, worker_id), 0)
     if message is None:
         return get_shared_state(model_name)
     return parse_state(message.decode())
