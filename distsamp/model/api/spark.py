@@ -4,11 +4,16 @@ from typing import Mapping
 
 from distsamp.distributions.state import State
 from distsamp.server.api.spark import get_server_api
-from distsamp.worker.api.spark import get_worker_api
+from distsamp.worker.api.spark import get_worker_api, register_named_worker
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
 ModelAPI = namedtuple("ModelAPI", ["server_api", "worker_apis"])
+
+
+def set_prior(model_name: str, state: State):
+    prior_api = register_named_worker(model_name, "prior")
+    prior_api.set_worker_state(state)
 
 
 def get_model_api(model_name):

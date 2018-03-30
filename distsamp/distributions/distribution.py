@@ -41,6 +41,9 @@ class Distribution(object):
     def to_dict(self) -> Mapping[str, Mapping[str, float]]:
         return vars(self)
 
+    def __eq__(self, other: 'Distribution'):
+        return np.all(self.mean == other.mean) and np.all(self.variance == other.variance)
+
     def serialize(self):
         return pickle.dumps(multivariate_normal(loc=self.mean, scale=self.variance))
 

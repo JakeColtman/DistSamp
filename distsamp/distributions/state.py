@@ -1,6 +1,7 @@
+import json
 import pickle
 from typing import Mapping
-from distsamp.distributions.distribution import deserialize_distribution, Distribution
+from distsamp.distributions.distribution import Distribution
 
 
 class State:
@@ -39,9 +40,18 @@ class State:
     def __repr__(self):
         return self.__str__()
 
+    def __eq__(self, other: 'State'):
+        if self.variables != other.variables:
+            return False
+
+        for var in self.variables:
+            if self.distributions[var] != other.distributions[var]:
+                return False
+        else:
+            return True
+
     def serialize(self):
-        distribution_dict = {key: self.distributions[key].serialize() for key in self.distributions}
-        return pickle.dumps(distribution_dict)
+        return pickle.dumps(self)
 
 
 def deserialize_state(message: bytes):
