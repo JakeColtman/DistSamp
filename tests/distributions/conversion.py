@@ -9,7 +9,7 @@ class DistributionConversionTest(unittest.TestCase):
 
     def test_conversion_reversible(self):
         true_mu, true_variance = 2.0, 10.0
-        eta, llambda = convert_to_natural_parameters(np.array(true_mu), np.array(true_variance))
+        eta, llambda = convert_to_natural_parameters(np.array([true_mu]), np.diag([true_variance]))
         back_mu, back_variance = convert_to_expectation_parameters(eta, llambda)
 
         self.assertEqual(true_mu, back_mu)

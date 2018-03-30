@@ -11,7 +11,7 @@ def convert_to_natural_parameters(mean: np.ndarray, variance: np.ndarray):
 
 def convert_to_expectation_parameters(eta: np.ndarray, llambda: np.ndarray):
     variance = np.linalg.inv(llambda)
-    mean = np.dot(llambda, eta)
+    mean = np.dot(variance, eta)
     return mean, variance
 
 
