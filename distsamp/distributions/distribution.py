@@ -1,15 +1,17 @@
 from typing import Mapping
 
-
-def convert_to_natural_parameters(mean: float, variance: float):
-    l = 1.0 / variance
-    e = l * mean
-    return e, l
+import numpy as np
 
 
-def convert_to_expectation_parameters(eta: float, llambda: float):
-    variance = 1.0 / llambda
-    mean = eta / llambda
+def convert_to_natural_parameters(mean: np.ndarray, variance: np.ndarray):
+    llambda = np.linalg.inv(variance)
+    eta = np.dot(llambda, mean)
+    return eta, llambda
+
+
+def convert_to_expectation_parameters(eta: np.ndarray, llambda: np.ndarray):
+    variance = np.linalg.inv(llambda)
+    mean = np.dot(llambda, eta)
     return mean, variance
 
 
