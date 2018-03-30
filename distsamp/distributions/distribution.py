@@ -1,6 +1,8 @@
 from typing import Mapping
+import pickle
 
 import numpy as np
+from scipy.stats import multivariate_normal
 
 
 def convert_to_natural_parameters(mean: np.ndarray, variance: np.ndarray):
@@ -38,3 +40,10 @@ class Distribution(object):
 
     def to_dict(self) -> Mapping[str, Mapping[str, float]]:
         return vars(self)
+
+    def serialize(self):
+        return pickle.dumps(multivariate_normal(loc=self.mean, scale=self.variance))
+
+
+def deserialize_distribution(serialization: bytes) -> Distribution:
+    return pickle.loads(serialization)

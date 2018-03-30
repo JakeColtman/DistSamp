@@ -1,6 +1,6 @@
-import json
+import pickle
 from typing import Mapping
-from distsamp.distributions.distribution import Distribution
+from distsamp.distributions.distribution import deserialize_distribution, Distribution
 
 
 class State:
@@ -39,19 +39,14 @@ class State:
     def __repr__(self):
         return self.__str__()
 
+    def serialize(self):
+        distribution_dict = {key: self.distributions[key].serialize() for key in self.distributions}
+        return pickle.dumps(distribution_dict)
 
-def parse_state_dictionary(message: Mapping[str, Mapping[str, float]]):
-    return State({key: Distribution(**message[key]) for key in message})
 
+def deserialize_state(message: bytes):
 
-def parse_state(message_str: str):
-
-    if message_str is None:
+    if message is None:
         return None
 
-    try:
-        message = json.loads(message_str)
-    except:
-        print("Failed on, ", message_str)
-        raise
-    return parse_state_dictionary(message)
+    return pickle.loads(message)

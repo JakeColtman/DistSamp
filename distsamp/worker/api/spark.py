@@ -1,6 +1,6 @@
 import redis
 
-from distsamp.distributions.state import parse_state
+from distsamp.distributions.state import deserialize_state
 
 from collections import namedtuple
 
@@ -9,20 +9,18 @@ POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
 def get_shared_state(model_name):
     r = redis.StrictRedis(connection_pool=POOL)
-    return parse_state(r.get("{}:{}".format(model_name, "shared")).decode())
+    return deserialize_state(r.get("{}:{}".format(model_name, "shared")))
 
 
 def get_worker_cavity(model_name, worker_id):
     r = redis.StrictRedis(connection_pool=POOL)
     message = r.lindex("{}:cavity:{}".format(model_name, worker_id), 0)
-    if message is None:
-        return get_shared_state(model_name)
-    return parse_state(message.decode())
+    return deserialize_state(message)
 
 
 def set_worker_state(model_name, worker_id, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.set("{}:worker:{}".format(model_name, worker_id), str(state))
+    r.set("{}:worker:{}".format(model_name, worker_id), state.serialize())
 
 
 WorkerAPI = namedtuple("WorkerAPI", ["get_worker_cavity", "set_worker_state"])

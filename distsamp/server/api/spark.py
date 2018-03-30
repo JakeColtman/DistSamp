@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import redis
 
-from distsamp.distributions.state import parse_state
+from distsamp.distributions.state import deserialize_state
 
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
@@ -18,34 +18,28 @@ def get_worker_ids(server_name):
 def get_worker_state(server_name, worker_id):
     r = redis.StrictRedis(connection_pool=POOL)
     message = r.get("{}:worker:{}".format(server_name, worker_id))
-    if message is None:
-        return None
-    else:
-        return parse_state(message.decode())
+    return deserialize_state(message)
 
 
 def set_worker_cavity(server_name, worker_id, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.lpush("{}:cavity:{}".format(server_name, worker_id), str(state))
+    r.lpush("{}:cavity:{}".format(server_name, worker_id), state.serialize())
 
 
 def set_shared_state(server_name, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.lpush("{}:shared".format(server_name), str(state))
+    r.lpush("{}:shared".format(server_name), state.serialize())
 
 
 def set_prior(server_name, state):
     r = redis.StrictRedis(connection_pool=POOL)
-    r.set("{}:worker:{}".format(server_name, 0), str(state))
+    r.set("{}:worker:{}".format(server_name, 0), state.serialize())
 
 
 def get_shared_state(server_name):
     r = redis.StrictRedis(connection_pool=POOL)
-    state = r.lindex("{}:{}".format(server_name, "shared"), 0)
-    if state is None:
-        return None
-    else:
-        return parse_state(state.decode())
+    message = r.lindex("{}:{}".format(server_name, "shared"), 0)
+    return deserialize_state(message)
 
 
 ServerAPI = namedtuple("ServerAPI", ["get_worker_ids", "get_worker_state", "set_worker_cavity", "get_shared_state", "set_shared_state"])
