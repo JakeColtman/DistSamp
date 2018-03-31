@@ -64,7 +64,6 @@ def deserialize_state(message: bytes):
 
 
 def state_from_samples(samples, shared_variables: None) -> State:
-    from distsamp.distributions.distribution import distribution_from_samples
     distributions_dict = {}
 
     all_distrs = set(samples.keys())

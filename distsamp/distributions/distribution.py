@@ -52,6 +52,10 @@ def deserialize_distribution(serialization: bytes) -> Distribution:
 
 
 def distribution_from_samples(samples: np.ndarray) -> Distribution:
-    mean = np.mean(samples, axis=0)
-    covar = np.cov(samples, rowvar=False)
+    if len(samples.shape) == 1:
+        mean = np.mean(samples).reshape(1,)
+        covar = np.var(samples).reshape(1,1)
+    else:
+        mean = np.mean(samples, axis=0)
+        covar = np.cov(samples, rowvar=False)
     return Distribution(mean, covar)
