@@ -2,7 +2,7 @@ import json
 import pickle
 from typing import Mapping
 
-from distsamp.distributions.distribution import Distribution
+from distsamp.distributions.distribution import Distribution, distribution_from_samples
 
 
 class State:
@@ -61,3 +61,20 @@ def deserialize_state(message: bytes):
         return None
 
     return pickle.loads(message)
+
+
+def state_from_samples(samples, shared_variables: None) -> State:
+    from distsamp.distributions.distribution import distribution_from_samples
+    distributions_dict = {}
+
+    all_distrs = set(samples.keys())
+    if shared_variables is not None:
+        shared_distrs = [x for x in all_distrs if x in shared_variables]
+    else:
+        shared_distrs = all_distrs
+
+    for distr in shared_distrs:
+        if distr == "lp__":
+            continue
+        distributions_dict[distr] = distribution_from_samples(samples[distr])
+    return State(distributions_dict)

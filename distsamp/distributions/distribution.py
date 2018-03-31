@@ -51,7 +51,7 @@ def deserialize_distribution(serialization: bytes) -> Distribution:
     return pickle.loads(serialization)
 
 
-def distributions_from_samples(samples: np.ndarray) -> Distribution:
+def distribution_from_samples(samples: np.ndarray) -> Distribution:
     mean = np.mean(samples, axis=0)
-    covar = np.cov(samples, rowvar=0)
+    covar = np.cov(samples, rowvar=False)
     return Distribution(mean, covar)
