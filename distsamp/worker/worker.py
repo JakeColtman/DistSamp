@@ -21,12 +21,12 @@ class Worker:
     def __init__(self, api: WorkerAPI, f_run: Callable[[Iterable, State], State]):
         self.api = api
         self.f_run = f_run
-        self.shared_variables = self.api.get_worker_cavity().variables
+        self.shared_variables = self.api.get_site_cavity().variables
 
     def run(self, data):
 
         for _ in range(5):
-            cavity = self.api.get_worker_cavity()
+            cavity = self.api.get_site_cavity()
             tilted_approx = self.f_run(data, cavity)
             own_updated_state = tilted_approx / cavity
             self.api.set_worker_state(own_updated_state)
@@ -49,12 +49,12 @@ class StanWorker:
     def __init__(self, api: WorkerAPI, f_run: Callable[[Iterable, State], OrderedDict]):
         self.api = api
         self.f_run = f_run
-        self.shared_variables = self.api.get_worker_cavity().variables
+        self.shared_variables = self.api.get_site_cavity().variables
 
     def run(self, data):
 
         for _ in range(5):
-            cavity = self.api.get_worker_cavity()
+            cavity = self.api.get_site_cavity()
             samples = self.f_run(data, cavity)
             tilted_approx = state_from_samples(samples, self.shared_variables)
             own_updated_state = tilted_approx / cavity

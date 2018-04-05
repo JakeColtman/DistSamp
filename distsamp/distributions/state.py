@@ -36,7 +36,7 @@ class State:
 
     def __str__(self):
         message_dict = {key: self.distributions[key].to_dict() for key in self.variables}
-        return json.dumps(message_dict)
+        return str(message_dict)
 
     def __repr__(self):
         return self.__str__()

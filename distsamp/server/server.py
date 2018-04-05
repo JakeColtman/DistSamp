@@ -30,16 +30,16 @@ class Server:
             if w_id == "prior":
                 continue
             if w_state is None:
-                self.api.set_worker_cavity(w_id, updated_state)
+                self.api.set_site_cavity(w_id, updated_state)
             else:
                 worker_cavity = updated_state / w_state
-                self.api.set_worker_cavity(w_id, worker_cavity)
+                self.api.set_site_cavity(w_id, worker_cavity)
 
     def set_new_worker_cavities(self, updated_state):
         worker_ids = self.api.get_worker_ids()
-        new_worker_ids = {x for x in worker_ids if self.api.get_worker_cavity(x) is None}
+        new_worker_ids = {x for x in worker_ids if self.api.get_site_cavity(x) is None}
         for w_id in new_worker_ids:
-            self.api.set_worker_cavity(w_id, updated_state)
+            self.api.set_site_cavity(w_id, updated_state)
 
     def run(self):
         print("Monitoring server")
