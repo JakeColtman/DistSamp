@@ -1,4 +1,4 @@
-from typing import Mapping
+import pickle
 
 import redis
 
@@ -21,25 +21,31 @@ def unregister_model(model_name):
         r.delete(key)
 
 
-def serialize_model(m_api: ModelAPI) -> Mapping[str, State]:
-    output = dict()
-    output["shared"] = m_api.server_api.get_shared_state()
-    for w_id in m_api.worker_apis:
-        output[w_id] = m_api.worker_apis[w_id].get_site_cavity()
-    return output
+def serialize_model(model_name: str, m_api: ModelAPI) -> bytes:
+    site_ids = m_api.server_api.get_site_ids()
+    output_dict = {
+                "settings": {"model_name": model_name},
+                "shared": m_api.server_api.get_shared_state(),
+                "sites": {site_id: m_api.site_apis[site_id].get_site_state() for site_id in site_ids},
+                "cavities": {site_id: m_api.server_api.get_site_cavity(site_id) for site_id in site_ids}
+              }
+    return pickle.dumps(output_dict)
 
 
-def restore_model(model_name: str, serialized_model: Mapping[str, State]) -> ModelAPI:
+def restore_model(serialized_model: bytes) -> ModelAPI:
+
+    model_dict = pickle.loads(serialized_model)
+    model_name = model_dict["settings"]["name"]
 
     s_api = get_server_api(model_name)
+    s_api.set_shared_state(model_dict["shared"])
 
-    w_apis = {}
+    site_apis = {}
 
-    for key, value in serialized_model.items():
-        if key == "shared":
-            s_api.set_shared_state(value)
-        else:
-            w_apis[key] = register_named_worker(model_name, key)
-            w_apis[key].set_worker_state(value)
+    for site_id in model_dict["sites"]:
+        site_api = register_named_worker(model_name, site_id)
+        site_api.set_site_state(model_dict["sites"][site_id])
+        site_apis[site_id] = site_api
+        s_api.set_site_cavity(site_id, model_dict["cavity"][site_id])
 
-    return s_api, w_apis
+    return ModelAPI(s_api, site_apis)
