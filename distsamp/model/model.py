@@ -1,8 +1,18 @@
+from typing import Mapping
+
+import redis
+
+from distsamp.api.redis import ModelAPI
+from distsamp.distributions.state import State
+from distsamp.api.redis import register_named_worker
+from distsamp.api.redis import get_server_api
+
+POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
+
 
 def set_prior(model_name: str, state: State):
     prior_api = register_named_worker(model_name, "prior")
     prior_api.set_worker_state(state)
-
 
 
 def unregister_model(model_name):
@@ -20,8 +30,6 @@ def serialize_model(m_api: ModelAPI) -> Mapping[str, State]:
 
 
 def restore_model(model_name: str, serialized_model: Mapping[str, State]) -> ModelAPI:
-    from distsamp.worker.api.spark import register_named_worker
-    from distsamp.server.api.spark import get_server_api
 
     s_api = get_server_api(model_name)
 

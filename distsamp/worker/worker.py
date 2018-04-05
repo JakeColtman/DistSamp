@@ -2,13 +2,15 @@ from collections import OrderedDict
 from typing import Callable, Iterable
 
 from distsamp.distributions.state import State, state_from_samples
-from distsamp.worker.api.spark import WorkerAPI
+from distsamp.api.redis import WorkerAPI
 
 
 class Worker:
     """
-    Encapsulates a site in the overall likihood function
-    Handles the process of coordinating with the server and approximating the tilted distribution
+    Encapsulates the actual crunch of the system.
+    Reads a cavity from the server and generates an approximation to the tilted distribution
+
+    Isn't concerned with mechanisms necessary for the overall health of the approximation
 
     Attributes
     ---------

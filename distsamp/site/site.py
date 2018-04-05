@@ -1,4 +1,4 @@
-from distsamp.api.spark import SiteAPI
+from distsamp.api.redis import SiteAPI
 from distsamp.distributions.distribution import Distribution
 from distsamp.distributions.state import State
 
