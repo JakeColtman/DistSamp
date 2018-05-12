@@ -47,10 +47,12 @@ class Server:
         shared_state = self.api.get_shared_state()
         while True:
             site_ids = self.api.get_site_ids()
-            site_states = {site_id: self.api.get_site_state(site_ids) for site_id in site_ids}
+            site_states = {site_id: self.api.get_site_state(site_id) for site_id in site_ids}
             updated_state = self.updated_shared_state(site_states)
             if updated_state is None:
                 continue
+            if shared_state is None:
+                self.store_updated_state(updated_state, site_states)
             elif updated_state == shared_state:
                 self.set_new_site_cavities(updated_state)
             else:

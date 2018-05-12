@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from typing import Callable, Iterable
 
 from distsamp.distributions.distribution import Distribution

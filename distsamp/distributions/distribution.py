@@ -33,6 +33,9 @@ class Distribution:
     def serialize(self):
         return pickle.dumps(self)
 
+    def to_dict(self):
+        return {"family": self.family, "eta": self.eta, "llambda": self.llambda}
+
 
 def deserialize_distribution(serialization: bytes) -> Distribution:
     return pickle.loads(serialization)

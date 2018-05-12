@@ -12,7 +12,7 @@ POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
 def set_prior(model_name: str, state: State):
     prior_api = register_named_worker(model_name, "prior")
-    prior_api.set_worker_state(state)
+    prior_api.set_site_state(state)
 
 
 def unregister_model(model_name):

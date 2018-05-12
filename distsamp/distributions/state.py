@@ -1,7 +1,7 @@
 import pickle
 from typing import Mapping
 
-from distsamp.distributions.distribution import Distribution, distribution_from_samples
+from distsamp.distributions.distribution import Distribution, gaussian_distribution_from_samples
 
 
 class State:
@@ -74,5 +74,5 @@ def state_from_samples(samples, shared_variables: None) -> State:
     for distr in shared_distrs:
         if distr == "lp__":
             continue
-        distributions_dict[distr] = distribution_from_samples(samples[distr])
+        distributions_dict[distr] = gaussian_distribution_from_samples(samples[distr])
     return State(distributions_dict)
