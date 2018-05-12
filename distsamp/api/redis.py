@@ -6,8 +6,7 @@ from collections import namedtuple
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
-WorkerAPI = namedtuple("WorkerAPI", ["get_site_cavity", "set_worker_state"])
-SiteAPI = namedtuple("SiteAPI", ["get_worker_state", "get_site_state", "set_site_state", "get_shared_state"])
+WorkerAPI = namedtuple("WorkerAPI", ["get_worker_state", "get_site_state", "get_site_cavity", "set_site_state", "get_shared_state"])
 ServerAPI = namedtuple("ServerAPI", ["get_site_ids", "get_site_state", "get_site_cavity", "set_site_cavity", "get_shared_state", "set_shared_state"])
 ModelAPI = namedtuple("ModelAPI", ["server_api", "site_apis"])
 
@@ -59,11 +58,6 @@ def get_shared_state(model_name):
 def set_shared_state(model_name, state):
     r = redis.StrictRedis(connection_pool=POOL)
     r.lpush("{}:shared".format(model_name), state.serialize())
-    
-
-def get_worker_api(model_name, worker_id):
-    return WorkerAPI(lambda: get_site_cavity(model_name, worker_id),
-                     lambda state: set_worker_state(model_name, worker_id, state))
 
 
 def get_server_api(model_name):
@@ -75,9 +69,10 @@ def get_server_api(model_name):
                      lambda state: set_shared_state(model_name, state))
 
 
-def get_site_api(model_name, site_id):
-    return SiteAPI(lambda: get_worker_state(model_name, site_id),
+def get_worker_api(model_name, site_id):
+    return WorkerAPI(lambda: get_worker_state(model_name, site_id),
                    lambda: get_site_state(model_name, site_id),
+                   lambda: get_site_cavity(model_name, worker_id),
                    lambda state: set_site_state(model_name, site_id, state),
                    lambda: get_shared_state(model_name))
 
@@ -85,7 +80,7 @@ def get_site_api(model_name, site_id):
 def get_model_api(model_name):
     s_api = get_server_api(model_name)
     site_ids = s_api.get_site_ids()
-    site_apis = {site_ids: get_site_api(model_name, site_id) for site_id in site_ids}
+    site_apis = {} # {site_ids: get_site_api(model_name, site_id) for site_id in site_ids}
     return ModelAPI(s_api, site_apis)
 
 

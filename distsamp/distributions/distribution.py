@@ -1,5 +1,4 @@
 import pickle
-from typing import Mapping
 
 import numpy as np
 
@@ -16,32 +15,20 @@ def convert_to_expectation_parameters(eta: np.ndarray, llambda: np.ndarray):
     return mean, variance
 
 
-class Distribution(object):
+class Distribution:
 
-    def __init__(self, mean=None, variance=None, eta=None, llambda=None):
-        if eta is not None and mean is not None:
-            self.mean, self.variance, self.eta, self.llambda = mean, variance, eta, llambda
-        elif eta is None:
-            self.mean, self.variance = mean, variance
-            self.eta, self.llambda = convert_to_natural_parameters(mean, variance)
-        elif mean is None:
-            self.eta, self.llambda = eta, llambda
-            self.mean, self.variance = convert_to_expectation_parameters(eta, llambda)
-        else:
-            print(mean, variance, eta, llambda)
-            raise ValueError("Distribution requires either expectation or natural parameters")
+    def __init__(self, family, eta, llambda):
+        self.family = family
+        self.eta, self.llambda = eta, llambda
 
-    def __truediv__(self, other):
-        return Distribution(eta=self.eta - other.eta, llambda=self.llambda - other.llambda)
+    def __truediv__(self, other: 'Distribution'):
+        return Distribution(self.eta - other.eta, self.llambda - other.llambda)
 
-    def __mul__(self, other):
-        return Distribution(eta=self.eta + other.eta, llambda=self.llambda + other.llambda)
-
-    def to_dict(self) -> Mapping[str, Mapping[str, float]]:
-        return vars(self)
+    def __mul__(self, other: 'Distribution'):
+        return Distribution(self.eta + other.eta, self.llambda + other.llambda)
 
     def __eq__(self, other: 'Distribution'):
-        return np.all(self.mean == other.mean) and np.all(self.variance == other.variance)
+        return np.all(self.eta == other.eta) and np.all(self.llambda == other.llambda)
 
     def serialize(self):
         return pickle.dumps(self)
@@ -51,11 +38,25 @@ def deserialize_distribution(serialization: bytes) -> Distribution:
     return pickle.loads(serialization)
 
 
-def distribution_from_samples(samples: np.ndarray) -> Distribution:
+def gaussian_distribution_from_samples(samples: np.ndarray) -> Distribution:
     if len(samples.shape) == 1:
         mean = np.mean(samples).reshape(1,)
-        covar = np.var(samples).reshape(1,1)
+        covar = np.var(samples).reshape(1, 1)
     else:
         mean = np.mean(samples, axis=0)
         covar = np.cov(samples, rowvar=False)
-    return Distribution(mean, covar)
+    llambda = np.linalg.inv(covar)
+    eta = np.dot(llambda, mean)
+    return Distribution("gaussian", eta, llambda)
+
+
+def gamma_natural_parameters_from_samples(samples):
+    mean, variance = np.mean(samples), np.var(samples)
+    beta = mean / variance
+    alpha = mean * beta
+    return alpha - 1, beta
+
+
+def gamma_distribution_from_samples(samples: np.ndarray) -> Distribution:
+    eta, llambda = gamma_natural_parameters_from_samples(samples)
+    return Distribution("gamma", eta, llambda)
