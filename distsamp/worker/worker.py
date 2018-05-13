@@ -1,6 +1,6 @@
 from typing import Callable, Iterable
 
-from distsamp.distributions.distribution import Distribution
+from distsamp.distributions.distribution import GaussianDistribution
 from distsamp.distributions.state import State
 from distsamp.api.redis import WorkerAPI
 
@@ -26,13 +26,10 @@ class Worker:
         self.damping = damping
 
     @staticmethod
-    def updated_distribution(worker_distribution: Distribution, site_distribution: Distribution, damping: float):
+    def updated_distribution(worker_distribution: GaussianDistribution, site_distribution: GaussianDistribution, damping: float):
         if site_distribution is None:
             return worker_distribution
-
-        updated_eta = damping * site_distribution.eta + (1 - damping) * worker_distribution.eta
-        updated_llambda = damping * site_distribution.llambda + (1 - damping) * worker_distribution.llambda
-        return Distribution(family="gaussian", eta=updated_eta, llambda=updated_llambda)
+        return (site_distribution * damping) * (worker_distribution * (1 - damping))
 
     @staticmethod
     def updated_state(worker_state: State, site_state: State, damping: float):

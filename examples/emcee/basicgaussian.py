@@ -4,9 +4,7 @@ from distsamp.worker.worker import Worker
 
 def approximate_posterior(dataframe, cavity):
     from distsamp.distributions.distribution import gaussian_distribution_from_samples
-    from distsamp.distributions.distribution import gaussian_convert_to_expectation_parameters
     from distsamp.distributions.state import State
-    prior_mean, prior_variance = gaussian_convert_to_expectation_parameters(cavity["theta"].eta, cavity["theta"].llambda)
 
     import emcee
     import numpy as np
@@ -17,7 +15,7 @@ def approximate_posterior(dataframe, cavity):
     data = dataframe["x"].as_matrix()
 
     def lnprior(theta):
-        return norm.logpdf(theta, prior_mean, np.power(prior_variance, 0.5))
+        return norm.logpdf(theta, cavity["theta"].mean, np.power(cavity["theta"].variance, 0.5))
 
     def lnlike(theta, data):
         return np.sum(norm.logpdf(data, theta, 1.0))
@@ -56,21 +54,20 @@ def make_data():
 
 
 if __name__ == "__main__":
-
     import pandas as pd
     import numpy as np
     import seaborn as sns
     from matplotlib import pyplot as plt
 
     from distsamp.distributions.state import State
-    from distsamp.distributions.distribution import gaussian_distribution_from_expectation_parameters
+    from distsamp.distributions.distribution import GaussianDistribution
     from distsamp.model.model import set_prior
     from distsamp.api.redis import get_server_api
     from distsamp.model.local import LocalData, LocalModel
 
-    MODEL_NAME = "SimpleTestSix"
+    MODEL_NAME = "BasicGaussian"
 
-    prior = State({"theta": gaussian_distribution_from_expectation_parameters(np.array(10.0), np.diag([100.0]))})
+    prior = State({"theta": GaussianDistribution.from_expectation_parameters(10.0, 100.0)})
     set_prior(MODEL_NAME, prior)
 
     dataframe = make_data()
@@ -85,13 +82,9 @@ if __name__ == "__main__":
     local_model = LocalModel(MODEL_NAME, [local_data])
     local_model.run()
 
-    from distsamp.api.redis import get_server_api
-    from distsamp.distributions.distribution import gaussian_convert_to_expectation_parameters
-
     server_api = get_server_api(MODEL_NAME)
     shared_state = server_api.get_shared_state()
-    eta, llambda = shared_state["theta"].eta, shared_state["theta"].llambda
-    mean, variance = gaussian_convert_to_expectation_parameters(eta, llambda)
-    sns.distplot(np.random.normal(mean[0][0], variance[0][0], 1000))
+
+    sns.distplot(np.random.normal(shared_state["theta"].mean, shared_state["theta"].variance, 1000))
 
     plt.show()
