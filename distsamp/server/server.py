@@ -53,6 +53,7 @@ class Server:
                 continue
             if shared_state is None:
                 self.store_updated_state(updated_state, site_states)
+                shared_state = updated_state
             elif updated_state == shared_state:
                 self.set_new_site_cavities(updated_state)
             else:
