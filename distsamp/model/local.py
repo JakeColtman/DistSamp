@@ -2,26 +2,29 @@ from copy import copy
 from multiprocessing import Pool
 from typing import Any, Callable, List
 
-from distsamp.server.server import get_server_api, Server
+from distsamp.api.redis import get_server_api
+from distsamp.server.server import Server
 from distsamp.worker.worker import Worker
 
 
 class LocalData:
 
-    def __init__(self, dataframe, partition_key, n_partitions, f_worker: Callable[Any, Worker]):
+    def __init__(self, dataframe, partition_key, n_partitions, f_worker: Callable[[Any], Worker]):
         self.dataframe = dataframe
         self.partition_key = partition_key
         self.f_worker = f_worker
         self.n_partitions = n_partitions
 
+    @staticmethod
+    def run_partition(f_worker, dataframe):
+        f_worker(dataframe).run(dataframe)
+
     def run(self):
-
         partition_values = self.dataframe[self.partition_key].unique()
-
-        partition_dataframes = [self.dataframe[self.dataframe[self.partition_key == key]] for key in partition_values]
-
+        partition_dataframes = [self.dataframe[self.dataframe[self.partition_key] == key] for key in partition_values]
         with Pool(len(partition_dataframes)) as p:
-            p.map(lambda x: self.f_worker(x).run(x), partition_dataframes)
+            arguments = zip([self.f_worker for _ in range(self.n_partitions)], partition_dataframes)
+            p.starmap(self.run_partition, arguments)
 
 
 class LocalModel:

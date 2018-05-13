@@ -27,16 +27,25 @@ class Worker:
 
     @staticmethod
     def updated_distribution(worker_distribution: Distribution, site_distribution: Distribution, damping: float):
+        if site_distribution is None:
+            return worker_distribution
+
         updated_eta = damping * site_distribution.eta + (1 - damping) * worker_distribution.eta
         updated_llambda = damping * site_distribution.llambda + (1 - damping) * worker_distribution.llambda
         return Distribution(family="gaussian", eta=updated_eta, llambda=updated_llambda)
 
     @staticmethod
     def updated_state(worker_state: State, site_state: State, damping: float):
+        if site_state is None:
+            return worker_state
         variables = worker_state.variables
         return State({v: Worker.updated_distribution(worker_state[v], site_state[v], damping) for v in variables})
 
     def run(self, data):
+        cavity = self.api.get_site_cavity()
+        while cavity is None:
+            cavity = self.api.get_site_cavity()
+
         for _ in range(5):
             cavity = self.api.get_site_cavity()
             site_state = self.api.get_site_state()
@@ -44,4 +53,3 @@ class Worker:
             worker_state = tilted_approx / cavity
             updated_state = self.updated_state(worker_state, site_state, self.damping)
             self.api.set_site_state(updated_state)
-            yield updated_state
