@@ -34,15 +34,45 @@ class Distribution:
 
 class GammaDistribution(Distribution):
 
-    def __init__(self, eta, llambda):
+    def __init__(self, alpha, beta):
         self.family = "gamma"
-        self.eta, self.llambda = eta, llambda
+        self.a, self.b = alpha, beta
 
     def serialize(self):
         return pickle.dumps(self)
 
     def to_dict(self):
-        return {"family": self.family, "eta": self.eta, "llambda": self.llambda}
+        return {"family": self.family, "alpha": self.a, "beta": self.b}
+
+    def __truediv__(self, other: 'GammaDistribution'):
+        if self.family != other.family:
+            raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
+        return GammaDistribution(self.a - other.a, self.b - other.b)
+
+    def __mul__(self, other: Union[float, 'GammaDistribution']):
+        if type(other) == float:
+            return GammaDistribution(self.a * other, self.b * other)
+
+        if self.family != other.family:
+            raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
+        return GammaDistribution(self.a + other.a, self.b + other.b)
+
+    def __eq__(self, other: 'GammaDistribution'):
+        if self.family != other.family:
+            raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
+        return np.all(self.a == other.a) and np.all(self.b == other.b)
+
+    @staticmethod
+    def from_expectation_parameters(alpha, llambda):
+        return GammaDistribution(alpha - 1, 1.0 / llambda)
+
+    @property
+    def alpha(self):
+        return self.a + 1
+
+    @property
+    def llambda(self):
+        return 1.0 / self.b
 
 
 class GaussianDistribution(Distribution):
