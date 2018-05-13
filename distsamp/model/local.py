@@ -1,5 +1,5 @@
-from copy import copy
-from multiprocessing import Pool
+from multiprocessing import Pool, Process
+
 from typing import Any, Callable, List
 
 from distsamp.api.redis import get_server_api
@@ -32,9 +32,16 @@ class LocalModel:
     def __init__(self, model_name: str, data_list: List[LocalData]):
         self.model_name = model_name
         self.data_list = data_list
+
+    @staticmethod
+    def run_server(model_name):
         server_api = get_server_api(model_name)
-        self.server = Server(server_api)
+        server = Server(server_api)
+        server.run()
 
     def run(self):
+        server_process = Process(target=self.run_server, args=(self.model_name,))
+        server_process.start()
+
         for data in self.data_list:
             data.run()

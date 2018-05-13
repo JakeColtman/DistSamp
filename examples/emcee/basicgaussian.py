@@ -82,7 +82,8 @@ if __name__ == "__main__":
 
     local_data = LocalData(dataframe, "name", 2, make_worker)
 
-    local_data.run()
+    local_model = LocalModel(MODEL_NAME, [local_data])
+    local_model.run()
 
     from distsamp.api.redis import get_server_api
     from distsamp.distributions.distribution import gaussian_convert_to_expectation_parameters
