@@ -134,7 +134,10 @@ class MultivariateGaussianDistribution(Distribution):
             raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
         return MultivariateGaussianDistribution(self.eta - other.eta, self.llambda - other.llambda)
 
-    def __mul__(self, other: 'MultivariateGaussianDistribution'):
+    def __mul__(self, other: Union[float, 'MultivariateGaussianDistribution']):
+        if type(other) == float:
+            return MultivariateGaussianDistribution(self.eta * other, self.llambda * other)
+
         if self.family != other.family:
             raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
         return MultivariateGaussianDistribution(self.eta + other.eta, self.llambda + other.llambda)
