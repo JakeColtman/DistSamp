@@ -1,34 +1,30 @@
 import pickle
-
-import numpy as np
+from typing import Union
 
 
 class Distribution:
-
-    def __init__(self, family, eta, llambda):
-        self.family = family
-        self.eta, self.llambda = eta, llambda
+    """
+    A base class for distributions.
+    Should be subclassed into concrete exponential families
+    e.g. Gaussian, Gamma
+    """
 
     def __truediv__(self, other: 'Distribution'):
         if self.family != other.family:
             raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
         return Distribution(self.family, self.eta - other.eta, self.llambda - other.llambda)
 
-    def __mul__(self, other: 'Distribution'):
-        if self.family != other.family:
-            raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
-        return Distribution(self.family, self.eta + other.eta, self.llambda + other.llambda)
+    def __mul__(self, other: Union[float, 'Distribution']):
+        raise NotImplementedError("")
 
     def __eq__(self, other: 'Distribution'):
-        if self.family != other.family:
-            raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
-        return np.all(self.eta == other.eta) and np.all(self.llambda == other.llambda)
+        raise NotImplementedError("")
 
     def serialize(self):
         return pickle.dumps(self)
 
     def to_dict(self):
-        return {"family": self.family, "eta": self.eta, "llambda": self.llambda}
+        raise NotImplementedError("")
 
 
 def deserialize_distribution(serialization: bytes) -> Distribution:
