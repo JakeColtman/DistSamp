@@ -1,4 +1,5 @@
 import pickle
+from typing import Iterable
 
 import redis
 
@@ -10,9 +11,28 @@ from distsamp.api.redis import get_server_api
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
 
-def set_prior(model_name: str, state: State):
-    prior_api = register_named_worker(model_name, "prior")
-    prior_api.set_site_state(state)
+class Data:
+
+    def run(self):
+        raise NotImplementedError("")
+
+
+class Model:
+
+    def __init__(self, model_name: str, prior: State, data_list: Iterable[Data]):
+        self.model_name = model_name
+        self.prior = prior
+        self.data_list = data_list
+        self.set_prior(model_name, prior)
+
+    @staticmethod
+    def set_prior(model_name: str, state: State):
+        prior_api = register_named_worker(model_name, "prior")
+        prior_api.set_site_state(state)
+
+    def run(self):
+        raise NotImplementedError("")
+
 
 
 def unregister_model(model_name):

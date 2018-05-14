@@ -1,13 +1,14 @@
 from multiprocessing import Pool, Process
 
-from typing import Any, Callable, List
+from typing import Any, Callable
 
 from distsamp.api.redis import get_server_api
 from distsamp.server.server import Server
 from distsamp.worker.worker import Worker
+from distsamp.model.model import Data, Model
 
 
-class LocalData:
+class LocalData(Data):
 
     def __init__(self, dataframe, partition_key, n_partitions, f_worker: Callable[[Any], Worker]):
         self.dataframe = dataframe
@@ -27,11 +28,7 @@ class LocalData:
             p.starmap(self.run_partition, arguments)
 
 
-class LocalModel:
-
-    def __init__(self, model_name: str, data_list: List[LocalData]):
-        self.model_name = model_name
-        self.data_list = data_list
+class LocalModel(Model):
 
     @staticmethod
     def run_server(model_name):
