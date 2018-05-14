@@ -1,4 +1,3 @@
-import pickle
 from typing import Union
 
 import numpy as np
@@ -43,6 +42,11 @@ class GaussianDistribution(Distribution):
         mean = np.mean(samples)
         variance = np.var(samples)
         return GaussianDistribution.from_expectation_parameters(mean, variance)
+
+    def __eq__(self, other):
+        if self.family != other.family:
+            raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
+        return self.eta == other.eta and self.llambda == other.llambda
 
     def __truediv__(self, other: 'GaussianDistribution'):
         if self.family != other.family:

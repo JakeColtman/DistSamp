@@ -43,6 +43,11 @@ class MultivariateGaussianDistribution(Distribution):
         covariance = np.cov(samples, rowvar=False).reshape((mean.shape[0], mean.shape[0]))
         return MultivariateGaussianDistribution.from_expectation_parameters(mean, covariance)
 
+    def __eq__(self, other):
+        if self.family != other.family:
+            raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
+        return np.all(self.eta == other.eta) and np.all(self.llambda == other.llambda)
+
     def __truediv__(self, other: 'MultivariateGaussianDistribution'):
         if self.family != other.family:
             raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))

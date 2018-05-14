@@ -30,7 +30,7 @@ class GammaDistribution(Distribution):
     def __eq__(self, other: 'GammaDistribution'):
         if self.family != other.family:
             raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
-        return np.all(self.a == other.a) and np.all(self.b == other.b)
+        return self.a == other.a and self.b == other.b
 
     @staticmethod
     def from_expectation_parameters(alpha, llambda):
@@ -42,7 +42,6 @@ class GammaDistribution(Distribution):
         beta = mean / variance
         alpha = (mean * beta) - 1
         return GammaDistribution(alpha - 1, beta)
-
 
     @property
     def alpha(self):
