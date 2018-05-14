@@ -60,7 +60,7 @@ if __name__ == "__main__":
     from matplotlib import pyplot as plt
 
     from distsamp.state.state import State
-    from distsamp.distributions.distribution import GaussianDistribution
+    from distsamp.distributions.gaussian import GaussianDistribution
     from distsamp.model.model import set_prior
     from distsamp.api.redis import get_server_api
     from distsamp.model.local import LocalData, LocalModel
