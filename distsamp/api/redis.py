@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import redis
 
-from distsamp.distributions.state import deserialize_state
+from distsamp.state.state import deserialize_state
 
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)

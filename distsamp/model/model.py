@@ -3,7 +3,7 @@ import pickle
 import redis
 
 from distsamp.api.redis import ModelAPI
-from distsamp.distributions.state import State
+from distsamp.state.state import State
 from distsamp.api.redis import register_named_worker
 from distsamp.api.redis import get_server_api
 

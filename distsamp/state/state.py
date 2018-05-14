@@ -55,7 +55,6 @@ class State:
 
 
 def deserialize_state(message: bytes):
-
     if message is None:
         return None
 

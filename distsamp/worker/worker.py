@@ -1,7 +1,7 @@
 from typing import Callable, Iterable
 
 from distsamp.distributions.distribution import GaussianDistribution
-from distsamp.distributions.state import State
+from distsamp.state.state import State
 from distsamp.api.redis import WorkerAPI
 
 

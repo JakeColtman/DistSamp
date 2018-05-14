@@ -4,7 +4,7 @@ from distsamp.worker.worker import Worker
 
 def approximate_posterior(dataframe, cavity):
     from distsamp.distributions.distribution import gaussian_distribution_from_samples
-    from distsamp.distributions.state import State
+    from distsamp.state.state import State
 
     import emcee
     import numpy as np
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     import seaborn as sns
     from matplotlib import pyplot as plt
 
-    from distsamp.distributions.state import State
+    from distsamp.state.state import State
     from distsamp.distributions.distribution import GaussianDistribution
     from distsamp.model.model import set_prior
     from distsamp.api.redis import get_server_api
