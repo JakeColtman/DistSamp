@@ -26,6 +26,9 @@ class Distribution:
     def to_dict(self):
         raise NotImplementedError("")
 
+    def to_scipy(self):
+        raise NotImplementedError("")
+
 
 def deserialize_distribution(serialization: bytes) -> Distribution:
     return pickle.loads(serialization)

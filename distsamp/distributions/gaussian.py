@@ -63,4 +63,4 @@ class GaussianDistribution(Distribution):
 
     def to_scipy(self):
         from scipy.stats import norm
-        return norm(self.mean, self.variance)
+        return norm(self.mean, np.power(self.variance, 0.5))
