@@ -1,10 +1,13 @@
 import pickle
 from typing import Mapping
 
-from distsamp.distributions.distribution import Distribution, gaussian_distribution_from_samples
+from distsamp.distributions.distribution import Distribution
 
 
 class State:
+    """
+    Representation of distributions over a number of different variables
+    """
 
     def __init__(self, distributions: Mapping[str, Distribution]):
         self.distributions = distributions
@@ -42,7 +45,7 @@ class State:
 
     def __eq__(self, other: 'State'):
         if self.variables != other.variables:
-            return False
+            raise ValueError("State operations only valid with matching variables, found: {}, expected: {}".format(other.variables, self.variables))
 
         for var in self.variables:
             if self.distributions[var] != other.distributions[var]:
@@ -57,21 +60,4 @@ class State:
 def deserialize_state(message: bytes):
     if message is None:
         return None
-
     return pickle.loads(message)
-
-
-def state_from_samples(samples, shared_variables: None) -> State:
-    distributions_dict = {}
-
-    all_distrs = set(samples.keys())
-    if shared_variables is not None:
-        shared_distrs = [x for x in all_distrs if x in shared_variables]
-    else:
-        shared_distrs = all_distrs
-
-    for distr in shared_distrs:
-        if distr == "lp__":
-            continue
-        distributions_dict[distr] = gaussian_distribution_from_samples(samples[distr])
-    return State(distributions_dict)
