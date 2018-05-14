@@ -74,6 +74,10 @@ class GammaDistribution(Distribution):
     def llambda(self):
         return 1.0 / self.b
 
+    def to_scipy(self):
+        from scipy.stats import gamma
+        return gamma(self.alpha, scale=self.llambda)
+
 
 class GaussianDistribution(Distribution):
 
@@ -122,6 +126,10 @@ class GaussianDistribution(Distribution):
         if self.family != other.family:
             raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
         return GaussianDistribution(self.eta + other.eta, self.llambda + other.llambda)
+
+    def to_scipy(self):
+        from scipy.stats import norm
+        return norm(self.mean, self.variance)
 
 
 class MultivariateGaussianDistribution(Distribution):
@@ -197,5 +205,5 @@ def gamma_natural_parameters_from_samples(samples):
 
 
 def gamma_distribution_from_samples(samples: np.ndarray) -> Distribution:
-    eta, llambda = gamma_natural_parameters_from_samples(samples)
-    return Distribution("gamma", eta, llambda)
+    alpha, beta = gamma_natural_parameters_from_samples(samples)
+    return GammaDistribution(alpha, beta)
