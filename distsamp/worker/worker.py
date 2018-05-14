@@ -1,16 +1,15 @@
 from typing import Callable, Iterable
 
-from distsamp.distributions.gaussian import GaussianDistribution
+from distsamp.distributions import Distribution
 from distsamp.state.state import State
 from distsamp.api.redis import WorkerAPI
 
 
 class Worker:
     """
-    Encapsulates the actual crunch of the system.
-    Reads a cavity from the server and generates an approximation to the tilted distribution
+    Encapsulates a site within the overall model
+    Primarily focused on approximating the site distribution given the cavity provided by the Server
 
-    Isn't concerned with mechanisms necessary for the overall health of the approximation
 
     Attributes
     ---------
@@ -26,7 +25,7 @@ class Worker:
         self.damping = damping
 
     @staticmethod
-    def updated_distribution(worker_distribution: GaussianDistribution, site_distribution: GaussianDistribution, damping: float):
+    def updated_distribution(worker_distribution: Distribution, site_distribution: Distribution, damping: float):
         if site_distribution is None:
             return worker_distribution
         return (site_distribution * damping) * (worker_distribution * (1 - damping))
