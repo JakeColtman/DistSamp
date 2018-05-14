@@ -4,17 +4,10 @@ from typing import Any, Callable
 
 from distsamp.api.redis import get_server_api
 from distsamp.server.server import Server
-from distsamp.worker.worker import Worker
 from distsamp.model.model import Data, Model
 
 
 class LocalData(Data):
-
-    def __init__(self, dataframe, partition_key, n_partitions, f_worker: Callable[[Any], Worker]):
-        self.dataframe = dataframe
-        self.partition_key = partition_key
-        self.f_worker = f_worker
-        self.n_partitions = n_partitions
 
     @staticmethod
     def run_partition(f_worker, dataframe):

@@ -70,8 +70,8 @@ def get_worker_api(model_name, site_id):
 def get_model_api(model_name):
     s_api = get_server_api(model_name)
     site_ids = s_api.get_site_ids()
-    site_apis = {} # {site_ids: get_site_api(model_name, site_id) for site_id in site_ids}
-    return ModelAPI(s_api, site_apis)
+    worker_apis = {site_ids: get_worker_api(model_name, site_id) for site_id in site_ids}
+    return ModelAPI(s_api, worker_apis)
 
 
 def register_worker(model_name):
