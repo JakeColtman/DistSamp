@@ -11,9 +11,6 @@ class GammaDistribution(Distribution):
         self.family = "gamma"
         self.a, self.b = alpha, beta
 
-    def to_dict(self):
-        return {"family": self.family, "alpha": self.a, "beta": self.b}
-
     def __truediv__(self, other: 'GammaDistribution'):
         if self.family != other.family:
             raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
@@ -43,6 +40,10 @@ class GammaDistribution(Distribution):
         alpha = (mean * beta) - 1
         return GammaDistribution(alpha - 1, beta)
 
+    @staticmethod
+    def from_scipy(scipy_distribution):
+        return GammaDistribution.from_expectation_parameters(scipy_distribution.args[0], scipy_distribution.kwds["scale"])
+
     @property
     def alpha(self):
         return self.a + 1
@@ -54,3 +55,6 @@ class GammaDistribution(Distribution):
     def to_scipy(self):
         from scipy.stats import gamma
         return gamma(self.alpha, scale=self.llambda)
+
+    def to_dict(self):
+        return {"family": self.family, "alpha": self.a, "beta": self.b}

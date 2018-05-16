@@ -43,6 +43,11 @@ class GaussianDistribution(Distribution):
         variance = np.var(samples)
         return GaussianDistribution.from_expectation_parameters(mean, variance)
 
+    @staticmethod
+    def from_scipy(scipy_distribution):
+        mean, sigma = scipy_distribution.args
+        return GaussianDistribution.from_expectation_parameters(mean, np.power(sigma, 2))
+
     def __eq__(self, other):
         if self.family != other.family:
             raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
