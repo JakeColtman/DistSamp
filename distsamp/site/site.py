@@ -1,6 +1,7 @@
-from typing import Any, Callable, Iterable
+from typing import Callable, Iterable
 
 from distsamp.api.redis import register_site, SiteAPI
+from distsamp.data import Data
 from distsamp.distributions import Distribution
 from distsamp.state.state import State
 
@@ -19,7 +20,7 @@ class Site:
            Method to produce an approximation to the tilted distribution.
            Returns the _site_ approximation, not the whole likihood
     """
-    def __init__(self, api: SiteAPI, data: Any, f_approximate_tilted: Callable[[Iterable, State], State], damping: float):
+    def __init__(self, api: SiteAPI, data: Data, f_approximate_tilted: Callable[[Data, State], State], damping: float):
         self.api = api
         self.f_approximate_tilted = f_approximate_tilted
         self.damping = damping
@@ -44,7 +45,7 @@ class Site:
             cavity = self.api.get_site_cavity()
 
     def approximate_updated_state(self, cavity, current_state):
-        tilted_approx = self.f_approximate_tilted(self.data, cavity)
+        tilted_approx = self.data.run(self.f_approximate_tilted, cavity)
         new_state = tilted_approx / cavity
         updated_state = self.updated_state(current_state, new_state, self.damping)
         return updated_state

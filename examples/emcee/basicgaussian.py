@@ -55,20 +55,21 @@ if __name__ == "__main__":
     from matplotlib import pyplot as plt
 
     from distsamp.state.state import State
+    from distsamp.data import LocalData
     from distsamp.distributions.gaussian import GaussianDistribution
     from distsamp.api.redis import get_server_api
     from distsamp.model.local import SerialLocalModel
     from distsamp.site.site import sites_from_local_dataframe
 
     dataframe = make_data()
-
+    data = LocalData(dataframe)
     sns.distplot(dataframe[dataframe.name == "a"].x)
     sns.distplot(dataframe[dataframe.name == "b"].x)
     plt.show()
 
     MODEL_NAME = "BasicGaussian"
     prior = State({"theta": GaussianDistribution.from_expectation_parameters(10.0, 100.0)})
-    sites = sites_from_local_dataframe(MODEL_NAME, dataframe, "name", approximate_posterior, damping=0.2)
+    sites = sites_from_local_dataframe(MODEL_NAME, data, "name", approximate_posterior, damping=0.2)
 
     local_model = SerialLocalModel(MODEL_NAME, prior, sites)
     local_model.run_until_converged()
