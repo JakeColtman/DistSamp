@@ -1,8 +1,8 @@
 from typing import Any, Callable, Iterable
 
+from distsamp.api.redis import SiteAPI
 from distsamp.distributions import Distribution
 from distsamp.state.state import State
-from distsamp.api.redis import SiteAPI
 
 
 class Site:

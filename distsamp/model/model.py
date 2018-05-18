@@ -1,12 +1,11 @@
 import pickle
-from typing import Any, Callable, Iterable
+from typing import Iterable
 
 import redis
 
-from distsamp.api.redis import ModelAPI
-from distsamp.state.state import State
+from distsamp.api.redis import get_model_api, get_server_api, ModelAPI, register_named_site
 from distsamp.site.site import Site
-from distsamp.api.redis import get_model_api, get_server_api, register_named_site
+from distsamp.state.state import State
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
