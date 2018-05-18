@@ -57,7 +57,8 @@ if __name__ == "__main__":
     from distsamp.state.state import State
     from distsamp.distributions.gaussian import GaussianDistribution
     from distsamp.api.redis import get_server_api
-    from distsamp.model.local import LocalModel, sites_from_local_dataframe
+    from distsamp.model.local import SerialLocalModel
+    from distsamp.site.site import sites_from_local_dataframe
 
     dataframe = make_data()
 
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     prior = State({"theta": GaussianDistribution.from_expectation_parameters(10.0, 100.0)})
     sites = sites_from_local_dataframe(MODEL_NAME, dataframe, "name", approximate_posterior, damping=0.2)
 
-    local_model = LocalModel(MODEL_NAME, prior, sites)
+    local_model = SerialLocalModel(MODEL_NAME, prior, sites)
     local_model.run_until_converged()
 
     server_api = get_server_api(MODEL_NAME)
