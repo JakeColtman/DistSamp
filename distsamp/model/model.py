@@ -11,30 +11,6 @@ from distsamp.api.redis import get_model_api, get_server_api, register_named_sit
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
 
-class Data:
-    """
-    Encapsulates a data source within the model
-    Specifies how a data source should be converted into Sites
-
-    Parameters
-    ----------
-    dataframe - the data source to use in the model
-    partition_key - str - which column should be used to break up the dataframe into chunks
-    n_partitions - int - the number of chunks to make
-    f_site - method to create a site from a chunk
-
-    """
-
-    def __init__(self, dataframe: Any, partition_key: str, n_partitions: int, f_site: Callable[[Any], Site]):
-        self.dataframe = dataframe
-        self.partition_key = partition_key
-        self.f_site = f_site
-        self.n_partitions = n_partitions
-
-    def run_iteration(self):
-        raise NotImplementedError("")
-
-
 class Model:
     """
         Represents the whole model
@@ -53,12 +29,13 @@ class Model:
 
     """
 
-    def __init__(self, model_name: str, prior: State, data_list: Iterable[Data]):
+    def __init__(self, model_name: str, prior: State, sites: Iterable[Site]):
         self.model_name = model_name
         self.prior = prior
-        self.data_list = data_list
+        self.sites = sites
         self.model_api = get_model_api(model_name)
         self.set_prior(model_name, prior)
+        self.running = False
 
     @staticmethod
     def set_prior(model_name: str, state: State):
