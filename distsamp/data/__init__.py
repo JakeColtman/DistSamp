@@ -1,1 +1,1 @@
-from distsamp.data.data import Data
+from distsamp.data.data import Data, LocalData

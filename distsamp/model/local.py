@@ -30,6 +30,7 @@ class SerialLocalModel(Model):
     def run_iterations(self, n_iter=5):
         server_api = get_server_api(self.model_name)
         server = Server(server_api)
+        server.run_step()
 
         for _ in range(n_iter):
             for site in self.sites:

@@ -1,7 +1,9 @@
-from typing import Callable, Iterable
+from typing import Any, Callable, Iterable
+
+import pandas as pd
 
 from distsamp.api.redis import register_site, SiteAPI
-from distsamp.data import Data
+from distsamp.data import Data, LocalData
 from distsamp.distributions import Distribution
 from distsamp.state.state import State
 
@@ -20,7 +22,7 @@ class Site:
            Method to produce an approximation to the tilted distribution.
            Returns the _site_ approximation, not the whole likihood
     """
-    def __init__(self, api: SiteAPI, data: Data, f_approximate_tilted: Callable[[Data, State], State], damping: float):
+    def __init__(self, api: SiteAPI, data: Data, f_approximate_tilted: Callable[[Iterable, State], State], damping: float):
         self.api = api
         self.f_approximate_tilted = f_approximate_tilted
         self.damping = damping
@@ -35,7 +37,7 @@ class Site:
     @staticmethod
     def updated_state(current_state: State, new_state: State, damping: float):
         if current_state is None:
-            return current_state
+            return new_state
         variables = current_state.variables
         return State({v: Site.updated_distribution(current_state[v], new_state[v], damping) for v in variables})
 
@@ -61,14 +63,14 @@ class Site:
             self.api.set_site_state(updated_state)
 
 
-def sites_from_local_dataframe(model_name, dataframe: Any, partition_key: str, f_approximate_tilted: Callable[[Iterable, State], State], damping) -> Iterable[Site]:
+def sites_from_local_dataframe(model_name, dataframe: pd.DataFrame, partition_key: str, f_approximate_tilted: Callable[[Iterable, State], State], damping) -> Iterable[Site]:
     partition_values = dataframe[partition_key].unique()
-    partition_dataframes = [dataframe[dataframe[partition_key] == key] for key in partition_values]
+    data_list = [LocalData(dataframe[dataframe[partition_key] == key]) for key in partition_values]
     site_apis = [register_site(model_name) for _ in partition_values]
-    return [Site(site_api, data, f_approximate_tilted, damping) for (site_api, data) in zip(partition_dataframes, site_apis)]
+    return [Site(site_api, data, f_approximate_tilted, damping) for (data, site_api) in zip(data_list, site_apis)]
 
 
-def varying_sites_from_local_dataframe(model_name, dataframe: Any, partition_key: str, f_site: Callable[[Any], Site]) -> Iterable[Site]:
+def varying_sites_from_local_dataframe(model_name, dataframe: pd.DataFrame, partition_key: str, f_site: Callable[[Any], Site]) -> Iterable[Site]:
     partition_values = dataframe[partition_key].unique()
     partition_dataframes = [dataframe[dataframe[partition_key] == key] for key in partition_values]
     return [f_site(data) for data in partition_dataframes]
