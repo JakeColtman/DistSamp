@@ -2,15 +2,15 @@
 # from typing import List
 #
 # from distsamp.server.server import get_server_api, Server
-# from distsamp.worker.worker import Worker
+# from distsamp.site.site import Site
 #
 #
 # class SparkData:
 #
-#     def __init__(self, dataframe, partition_key, n_partitions, worker: Worker):
+#     def __init__(self, dataframe, partition_key, n_partitions, site: Site):
 #         self.dataframe = dataframe
 #         self.partition_key = partition_key
-#         self.worker = worker
+#         self.site = site
 #         self.n_partitions = n_partitions
 #
 #     def run(self):

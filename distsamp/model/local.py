@@ -10,14 +10,14 @@ from distsamp.model.model import Data, Model
 class LocalData(Data):
 
     @staticmethod
-    def run_partition(f_worker, dataframe):
-        f_worker(dataframe).run(dataframe)
+    def run_partition(f_site, dataframe):
+        f_site(dataframe).run(dataframe)
 
     def run_iteration(self):
         partition_values = self.dataframe[self.partition_key].unique()
         partition_dataframes = [self.dataframe[self.dataframe[self.partition_key] == key] for key in partition_values]
         with Pool(len(partition_dataframes)) as p:
-            arguments = zip([self.f_worker for _ in range(self.n_partitions)], partition_dataframes)
+            arguments = zip([self.f_site for _ in range(self.n_partitions)], partition_dataframes)
             p.starmap(self.run_partition, arguments)
 
 

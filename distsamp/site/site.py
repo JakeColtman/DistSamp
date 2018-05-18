@@ -2,10 +2,10 @@ from typing import Callable, Iterable
 
 from distsamp.distributions import Distribution
 from distsamp.state.state import State
-from distsamp.api.redis import WorkerAPI
+from distsamp.api.redis import SiteAPI
 
 
-class Worker:
+class Site:
     """
     Encapsulates a site within the overall model
     Primarily focused on approximating the site distribution given the cavity provided by the Server
@@ -13,29 +13,29 @@ class Worker:
 
     Attributes
     ---------
-    api: distsamp.worker.api.spark.WorkerAPI
-                API to allow the worker to interact with the rest of the system
+    api: distsamp.site.api.spark.SiteAPI
+                API to allow the site to interact with the rest of the system
     f_run: (data, cavity) -> distribution
            Method to produce an approximation to the tilted distribution.
            Returns the _site_ approximation, not the whole likihood
     """
-    def __init__(self, api: WorkerAPI, f_approximate_tilted: Callable[[Iterable, State], State], damping: float):
+    def __init__(self, api: SiteAPI, f_approximate_tilted: Callable[[Iterable, State], State], damping: float):
         self.api = api
         self.f_approximate_tilted = f_approximate_tilted
         self.damping = damping
 
     @staticmethod
-    def updated_distribution(worker_distribution: Distribution, site_distribution: Distribution, damping: float):
+    def updated_distribution(site_distribution: Distribution, site_distribution: Distribution, damping: float):
         if site_distribution is None:
-            return worker_distribution
-        return (site_distribution * damping) * (worker_distribution * (1 - damping))
+            return site_distribution
+        return (site_distribution * damping) * (site_distribution * (1 - damping))
 
     @staticmethod
-    def updated_state(worker_state: State, site_state: State, damping: float):
+    def updated_state(site_state: State, site_state: State, damping: float):
         if site_state is None:
-            return worker_state
-        variables = worker_state.variables
-        return State({v: Worker.updated_distribution(worker_state[v], site_state[v], damping) for v in variables})
+            return site_state
+        variables = site_state.variables
+        return State({v: Site.updated_distribution(site_state[v], site_state[v], damping) for v in variables})
 
     def block_until_model_ready(self):
         cavity = self.api.get_site_cavity()
@@ -50,6 +50,6 @@ class Worker:
             cavity = self.api.get_site_cavity()
             site_state = self.api.get_site_state()
             tilted_approx = self.f_approximate_tilted(data, cavity)
-            worker_state = tilted_approx / cavity
-            updated_state = self.updated_state(worker_state, site_state, self.damping)
+            site_state = tilted_approx / cavity
+            updated_state = self.updated_state(site_state, site_state, self.damping)
             self.api.set_site_state(updated_state)

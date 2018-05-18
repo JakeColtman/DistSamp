@@ -20,9 +20,9 @@ class ExpectationPropagationServerTest(unittest.TestCase):
         true_updated_mean = 9.0
         true_updated_variance = 0.5
 
-        worker_states = {0: prior, 1: observation}
+        site_states = {0: prior, 1: observation}
 
-        runner = Server.updated_shared_state(worker_states)
+        runner = Server.updated_shared_state(site_states)
 
         self.assertEqual(true_updated_mean, runner["alpha"]["mean"])
         self.assertEqual(true_updated_variance, runner["alpha"]["variance"])

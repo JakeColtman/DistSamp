@@ -1,6 +1,6 @@
-from distsamp.api.redis import register_worker
+from distsamp.api.redis import register_site
 from distsamp.state.state import State
-from distsamp.worker.worker import Worker
+from distsamp.site.site import Site
 
 
 def make_data():
@@ -50,9 +50,9 @@ def approximate_posterior(dataframe, prior: State):
     })
 
 
-def make_worker(dataframe):
-    worker_api = register_worker(MODEL_NAME)
-    return Worker(worker_api, approximate_posterior, 0.2)
+def make_site(dataframe):
+    site_api = register_site(MODEL_NAME)
+    return Site(site_api, approximate_posterior, 0.2)
 
 
 if __name__ == "__main__":
@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     MODEL_NAME = "BasicGaussian"
     prior = State({"theta": GaussianDistribution.from_expectation_parameters(10.0, 100.0)})
-    local_data = LocalData(dataframe, "name", 2, make_worker)
+    local_data = LocalData(dataframe, "name", 2, make_site)
 
     local_model = LocalModel(MODEL_NAME, prior, [local_data])
     local_model.run()

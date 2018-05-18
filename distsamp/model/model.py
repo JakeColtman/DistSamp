@@ -5,8 +5,8 @@ import redis
 
 from distsamp.api.redis import ModelAPI
 from distsamp.state.state import State
-from distsamp.worker.worker import Worker
-from distsamp.api.redis import get_model_api, get_server_api, register_named_worker
+from distsamp.site.site import Site
+from distsamp.api.redis import get_model_api, get_server_api, register_named_site
 
 POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
@@ -14,21 +14,21 @@ POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 class Data:
     """
     Encapsulates a data source within the model
-    Specifies how a data source should be converted into Workers
+    Specifies how a data source should be converted into Sites
 
     Parameters
     ----------
     dataframe - the data source to use in the model
     partition_key - str - which column should be used to break up the dataframe into chunks
     n_partitions - int - the number of chunks to make
-    f_worker - method to create a worker from a chunk
+    f_site - method to create a site from a chunk
 
     """
 
-    def __init__(self, dataframe: Any, partition_key: str, n_partitions: int, f_worker: Callable[[Any], Worker]):
+    def __init__(self, dataframe: Any, partition_key: str, n_partitions: int, f_site: Callable[[Any], Site]):
         self.dataframe = dataframe
         self.partition_key = partition_key
-        self.f_worker = f_worker
+        self.f_site = f_site
         self.n_partitions = n_partitions
 
     def run_iteration(self):
@@ -62,7 +62,7 @@ class Model:
 
     @staticmethod
     def set_prior(model_name: str, state: State):
-        prior_api = register_named_worker(model_name, "prior")
+        prior_api = register_named_site(model_name, "prior")
         prior_api.set_site_state(state)
 
     def run_iterations(self, n_iter=5):
@@ -93,7 +93,7 @@ class Model:
         site_apis = {}
 
         for site_id in model_dict["sites"]:
-            site_api = register_named_worker(model_name, site_id)
+            site_api = register_named_site(model_name, site_id)
             site_api.set_site_state(model_dict["sites"][site_id])
             site_apis[site_id] = site_api
             s_api.set_site_cavity(site_id, model_dict["cavity"][site_id])

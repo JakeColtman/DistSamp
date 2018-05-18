@@ -18,12 +18,12 @@ class Server:
 
     @staticmethod
     def updated_shared_state(site_states):
-        worker_states = [x for x in site_states.values() if x is not None]
+        site_states = [x for x in site_states.values() if x is not None]
 
-        if len(worker_states) == 0:
+        if len(site_states) == 0:
             return
 
-        return reduce(operator.mul, worker_states)
+        return reduce(operator.mul, site_states)
 
     def store_updated_state(self, updated_state, site_states):
         self.api.set_shared_state(updated_state)
@@ -33,8 +33,8 @@ class Server:
             if w_state is None:
                 self.api.set_site_cavity(w_id, updated_state)
             else:
-                worker_cavity = updated_state / w_state
-                self.api.set_site_cavity(w_id, worker_cavity)
+                site_cavity = updated_state / w_state
+                self.api.set_site_cavity(w_id, site_cavity)
 
     def set_new_site_cavities(self, updated_state):
         site_ids = self.api.get_site_ids()
