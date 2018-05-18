@@ -9,11 +9,17 @@ from distsamp.site.site import Site
 from distsamp.state.state import State
 
 
-def sites_from_local_dataframe(model_name, dataframe: Any, partition_key: str, f_approximate_tilted: Callable[[Iterable, State], State], damping):
+def sites_from_local_dataframe(model_name, dataframe: Any, partition_key: str, f_approximate_tilted: Callable[[Iterable, State], State], damping) -> Iterable[Site]:
     partition_values = dataframe[partition_key].unique()
     partition_dataframes = [dataframe[dataframe[partition_key] == key] for key in partition_values]
     site_apis = [register_site(model_name) for _ in partition_values]
     return [Site(site_api, data, f_approximate_tilted, damping) for (site_api, data) in zip(partition_dataframes, site_apis)]
+
+
+def varying_sites_from_local_dataframe(model_name, dataframe: Any, partition_key: str, f_site: Callable[[Any], Site]) -> Iterable[Site]:
+    partition_values = dataframe[partition_key].unique()
+    partition_dataframes = [dataframe[dataframe[partition_key] == key] for key in partition_values]
+    return [f_site(data) for data in partition_dataframes]
 
 
 class LocalModel(Model):

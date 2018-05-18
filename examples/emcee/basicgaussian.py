@@ -1,6 +1,4 @@
-from distsamp.api.redis import register_site
 from distsamp.state.state import State
-from distsamp.site.site import Site
 
 
 def make_data():
@@ -50,11 +48,6 @@ def approximate_posterior(dataframe, prior: State):
     })
 
 
-def make_site(dataframe):
-    site_api = register_site(MODEL_NAME)
-    return Site(site_api, approximate_posterior, 0.2)
-
-
 if __name__ == "__main__":
     import pandas as pd
     import numpy as np
@@ -64,7 +57,7 @@ if __name__ == "__main__":
     from distsamp.state.state import State
     from distsamp.distributions.gaussian import GaussianDistribution
     from distsamp.api.redis import get_server_api
-    from distsamp.model.local import LocalData, LocalModel
+    from distsamp.model.local import LocalModel, sites_from_local_dataframe
 
     dataframe = make_data()
 
@@ -74,10 +67,10 @@ if __name__ == "__main__":
 
     MODEL_NAME = "BasicGaussian"
     prior = State({"theta": GaussianDistribution.from_expectation_parameters(10.0, 100.0)})
-    local_data = LocalData(dataframe, "name", 2, make_site)
+    sites = sites_from_local_dataframe(MODEL_NAME, dataframe, "name", approximate_posterior, damping=0.2)
 
-    local_model = LocalModel(MODEL_NAME, prior, [local_data])
-    local_model.run()
+    local_model = LocalModel(MODEL_NAME, prior, sites)
+    local_model.run_until_converged()
 
     server_api = get_server_api(MODEL_NAME)
     shared_state = server_api.get_shared_state()
