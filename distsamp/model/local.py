@@ -44,18 +44,11 @@ class LocalModel(Model):
 
 class SerialLocalModel(Model):
 
-    @staticmethod
-    def f_run_server(model_name):
-        server_api = get_server_api(model_name)
-        server = Server(server_api)
-        server.run()
-
-    def ensure_server_running(self):
-        if not self.running:
-            server_process = Process(target=self.f_run_server, args=(self.model_name,))
-            server_process.start()
-
     def run_iterations(self, n_iter=5):
+        server_api = get_server_api(self.model_name)
+        server = Server(server_api)
 
         for _ in range(n_iter):
-            list([site.run_iteration() for site in self.sites])
+            for site in self.sites:
+                site.run_iteration()
+                server.run_step()

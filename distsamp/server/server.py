@@ -42,23 +42,24 @@ class Server:
         for w_id in new_site_ids:
             self.api.set_site_cavity(w_id, updated_state)
 
+    def run_step(self):
+        shared_state = self.api.get_shared_state()
+        site_ids = self.api.get_site_ids()
+        site_states = {site_id: self.api.get_site_state(site_id) for site_id in site_ids}
+        updated_state = self.updated_shared_state(site_states)
+        if updated_state is None:
+            return
+        if shared_state is None:
+            self.store_updated_state(updated_state, site_states)
+        elif updated_state == shared_state:
+            self.set_new_site_cavities(updated_state)
+        else:
+            self.store_updated_state(updated_state, site_states)
+
     def run(self):
         print("Monitoring server")
-        shared_state = self.api.get_shared_state()
         while True:
-            site_ids = self.api.get_site_ids()
-            site_states = {site_id: self.api.get_site_state(site_id) for site_id in site_ids}
-            updated_state = self.updated_shared_state(site_states)
-            if updated_state is None:
-                continue
-            if shared_state is None:
-                self.store_updated_state(updated_state, site_states)
-                shared_state = updated_state
-            elif updated_state == shared_state:
-                self.set_new_site_cavities(updated_state)
-            else:
-                shared_state = updated_state
-                self.store_updated_state(updated_state, site_states)
+            self.run_step()
 
 
 if __name__ == "__main__":
