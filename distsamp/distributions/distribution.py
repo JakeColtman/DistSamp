@@ -10,9 +10,7 @@ class Distribution:
     """
 
     def __truediv__(self, other: 'Distribution'):
-        if self.family != other.family:
-            raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
-        return Distribution(self.family, self.eta - other.eta, self.llambda - other.llambda)
+        raise NotImplementedError("")
 
     def __mul__(self, other: Union[float, 'Distribution']):
         raise NotImplementedError("")

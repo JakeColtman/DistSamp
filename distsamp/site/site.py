@@ -29,7 +29,7 @@ class Site:
     def updated_distribution(current_distribution: Distribution, new_distribution: Distribution, damping: float):
         if current_distribution is None:
             return new_distribution
-        return (current_distribution * damping) * (new_distribution* (1 - damping))
+        return (current_distribution * damping) * (new_distribution * (1 - damping))
 
     @staticmethod
     def updated_state(current_state: State, new_state: State, damping: float):
