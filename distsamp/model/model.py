@@ -31,7 +31,7 @@ class Data:
         self.f_worker = f_worker
         self.n_partitions = n_partitions
 
-    def run(self):
+    def run_iteration(self):
         raise NotImplementedError("")
 
 
@@ -65,7 +65,7 @@ class Model:
         prior_api = register_named_worker(model_name, "prior")
         prior_api.set_site_state(state)
 
-    def run(self):
+    def run_iterations(self, n_iter=5):
         raise NotImplementedError("")
 
     def serialize(self):
@@ -99,3 +99,10 @@ class Model:
             s_api.set_site_cavity(site_id, model_dict["cavity"][site_id])
 
         return ModelAPI(s_api, site_apis)
+
+    def is_converged(self):
+        pass
+
+    def run_until_converged(self):
+        while not self.is_converged():
+            self.run_iterations(1)

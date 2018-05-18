@@ -19,9 +19,9 @@ class Worker:
            Method to produce an approximation to the tilted distribution.
            Returns the _site_ approximation, not the whole likihood
     """
-    def __init__(self, api: WorkerAPI, f_run: Callable[[Iterable, State], State], damping: float):
+    def __init__(self, api: WorkerAPI, f_approximate_tilted: Callable[[Iterable, State], State], damping: float):
         self.api = api
-        self.f_run = f_run
+        self.f_approximate_tilted = f_approximate_tilted
         self.damping = damping
 
     @staticmethod
@@ -37,15 +37,19 @@ class Worker:
         variables = worker_state.variables
         return State({v: Worker.updated_distribution(worker_state[v], site_state[v], damping) for v in variables})
 
-    def run(self, data):
+    def block_until_model_ready(self):
         cavity = self.api.get_site_cavity()
         while cavity is None:
             cavity = self.api.get_site_cavity()
 
+    def run_iteration(self, data):
+
+        self.block_until_model_ready()
+
         for _ in range(5):
             cavity = self.api.get_site_cavity()
             site_state = self.api.get_site_state()
-            tilted_approx = self.f_run(data, cavity)
+            tilted_approx = self.f_approximate_tilted(data, cavity)
             worker_state = tilted_approx / cavity
             updated_state = self.updated_state(worker_state, site_state, self.damping)
             self.api.set_site_state(updated_state)

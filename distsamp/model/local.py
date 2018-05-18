@@ -13,7 +13,7 @@ class LocalData(Data):
     def run_partition(f_worker, dataframe):
         f_worker(dataframe).run(dataframe)
 
-    def run(self):
+    def run_iteration(self):
         partition_values = self.dataframe[self.partition_key].unique()
         partition_dataframes = [self.dataframe[self.dataframe[self.partition_key] == key] for key in partition_values]
         with Pool(len(partition_dataframes)) as p:
@@ -29,9 +29,9 @@ class LocalModel(Model):
         server = Server(server_api)
         server.run()
 
-    def run(self):
+    def run_iterations(self, n_iter=5):
         server_process = Process(target=self.run_server, args=(self.model_name,))
         server_process.start()
 
-        for data in self.data_list:
-            data.run()
+        for _ in range(n_iter):
+            list([x.run_iteration() for x in self.data_list])
