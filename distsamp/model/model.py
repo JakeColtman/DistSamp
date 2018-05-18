@@ -81,4 +81,4 @@ class Model:
 
     def run_until_converged(self):
         while not self.is_converged():
-            self.run_iterations(1)
+            self.run_iteration()

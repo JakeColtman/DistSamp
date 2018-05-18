@@ -27,12 +27,14 @@ class LocalModel(Model):
 
 class SerialLocalModel(Model):
 
-    def run_iterations(self, n_iter=5):
+    def run_iteration(self):
         server_api = get_server_api(self.model_name)
         server = Server(server_api)
         server.run_step()
 
+        for site in self.sites:
+            site.run_iteration()
+
+    def run_iterations(self, n_iter=5):
         for _ in range(n_iter):
-            for site in self.sites:
-                site.run_iteration()
-                server.run_step()
+            self.run_iteration()

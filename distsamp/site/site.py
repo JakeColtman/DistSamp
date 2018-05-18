@@ -55,12 +55,10 @@ class Site:
     def run_iteration(self):
 
         self.block_until_model_ready()
-
-        for _ in range(5):
-            cavity = self.api.get_site_cavity()
-            current_state = self.api.get_site_state()
-            updated_state = self.approximate_updated_state(cavity, current_state)
-            self.api.set_site_state(updated_state)
+        cavity = self.api.get_site_cavity()
+        current_state = self.api.get_site_state()
+        updated_state = self.approximate_updated_state(cavity, current_state)
+        self.api.set_site_state(updated_state)
 
 
 def sites_from_local_dataframe(model_name, dataframe: pd.DataFrame, partition_key: str, f_approximate_tilted: Callable[[Iterable, State], State], damping) -> Iterable[Site]:
