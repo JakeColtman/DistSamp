@@ -43,6 +43,12 @@ class Site:
         while cavity is None:
             cavity = self.api.get_site_cavity()
 
+    def approximate_updated_state(self, cavity, current_state):
+        tilted_approx = self.f_approximate_tilted(self.data, cavity)
+        new_state = tilted_approx / cavity
+        updated_state = self.updated_state(current_state, new_state, self.damping)
+        return updated_state
+
     def run_iteration(self):
 
         self.block_until_model_ready()
@@ -50,7 +56,5 @@ class Site:
         for _ in range(5):
             cavity = self.api.get_site_cavity()
             current_state = self.api.get_site_state()
-            tilted_approx = self.f_approximate_tilted(self.data, cavity)
-            new_state = tilted_approx / cavity
-            updated_state = self.updated_state(current_state, new_state, self.damping)
+            updated_state = self.approximate_updated_state(cavity, current_state)
             self.api.set_site_state(updated_state)
