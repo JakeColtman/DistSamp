@@ -18,11 +18,18 @@ class LocalModel(Model):
             server_process = Process(target=self.f_run_server, args=(self.model_name,))
             server_process.start()
 
-    def run_iterations(self, n_iter=5):
-        for _ in range(n_iter):
+    def run_iteration(self):
+        self.ensure_server_running()
+        print("Running iteration")
+        with Pool(len(self.sites)) as p:
+            serialized_sites = [s.serialize() for s in self.sites]
+            p.map(self.run_site_iteration, serialized_sites)
 
-            with Pool(len(self.sites)) as p:
-                p.map(lambda site: site.run_iteration(), self.sites)
+    @staticmethod
+    def run_site_iteration(serialized_site):
+        import dill as pickle
+        site = pickle.loads(serialized_site)
+        site.run_iteration()
 
 
 class SerialLocalModel(Model):

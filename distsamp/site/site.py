@@ -60,6 +60,10 @@ class Site:
         updated_state = self.approximate_updated_state(cavity, current_state)
         self.api.set_site_state(updated_state)
 
+    def serialize(self):
+        import dill as pickle
+        return pickle.dumps(self)
+
 
 def sites_from_local_dataframe(model_name, dataframe: pd.DataFrame, partition_key: str, f_approximate_tilted: Callable[[Iterable, State], State], damping) -> Iterable[Site]:
     partition_values = dataframe[partition_key].unique()
