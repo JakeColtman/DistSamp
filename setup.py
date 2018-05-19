@@ -9,5 +9,7 @@ setup(name='distsamp',
             "emcee",
             "pandas",
             "seaborn",
-            "scipy"
+            "scipy",
+            "matplotlib",
+            "numpy"
       ])
