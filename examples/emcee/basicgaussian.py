@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     from distsamp.state.state import State
     from distsamp.data import LocalData
-    from distsamp.distributions.gaussian import GaussianDistribution
+    from distsamp.distributions import GaussianDistribution
     from distsamp.api.redis import get_server_api
     from distsamp.model.local import SerialLocalModel
     from distsamp.site.site import sites_from_local_dataframe

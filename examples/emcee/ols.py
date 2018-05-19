@@ -9,7 +9,7 @@ def make_data():
     N = 50
     N_a, N_b = N // 2, N - (N // 2)
     x = np.sort(10 * np.random.rand(N))
-    y = m_true * x + np.random.normal(0, 0.5, N)
+    y = m_true * x + np.random.normal(0, 5, N)
 
     return pd.DataFrame({"X": x, "y": y, "name": ["a"] * N_a + ["b"] * N_b})
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     from matplotlib import pyplot as plt
 
     from distsamp.state.state import State
-    from distsamp.distributions.gaussian import GammaDistribution, GaussianDistribution
+    from distsamp.distributions import GammaDistribution, GaussianDistribution
     from distsamp.api.redis import get_server_api
     from distsamp.model.local import SerialLocalModel
     from distsamp.site.site import sites_from_local_dataframe
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     plt.scatter(dataframe["X"], dataframe["y"])
     plt.show()
 
-    MODEL_NAME = "BasicGaussian"
+    MODEL_NAME = "SimpleOLS"
     prior = State({
         "beta": GaussianDistribution.from_expectation_parameters(10.0, 100.0),
         "sigma": GammaDistribution.from_expectation_parameters(1., 2.)
@@ -82,12 +82,18 @@ if __name__ == "__main__":
     sites = sites_from_local_dataframe(MODEL_NAME, dataframe, "name", approximate_posterior, damping=0.2)
 
     local_model = SerialLocalModel(MODEL_NAME, prior, sites)
-    local_model.run_until_converged()
+    local_model.run_iterations(5)
 
     server_api = get_server_api(MODEL_NAME)
     shared_state = server_api.get_shared_state()
 
     plt.scatter(dataframe["X"], dataframe["y"])
     beta_mean = shared_state["beta"].to_scipy().mean()
-    plt.scatter([0, 10], [0, beta_mean * 10])
+    plt.plot([0, 10], [0, beta_mean * 10])
+
+    beta_sample = shared_state["beta"].to_scipy().rvs(1)
+    sigma_sample = shared_state["sigma"].to_scipy().rvs(1)
+    plt.scatter(dataframe["X"], beta_sample * dataframe["X"] + np.random.normal(0, sigma_sample, size=len(dataframe)))
+
     plt.show()
+

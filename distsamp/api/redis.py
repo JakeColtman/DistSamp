@@ -53,16 +53,16 @@ def set_shared_state(model_name, state):
 
 def get_server_api(model_name):
     return ServerAPI(lambda: get_site_ids(model_name),
-                     lambda site_id: get_site_state(model_name, site_id),
-                     lambda site_id: get_site_cavity(model_name, site_id),
+                     lambda site_id, offset=0: get_site_state(model_name, site_id, offset),
+                     lambda site_id, offset=0: get_site_cavity(model_name, site_id, offset),
                      lambda site_id, state: set_site_cavity(model_name, site_id, state),
-                     lambda: get_shared_state(model_name),
+                     lambda offset=0: get_shared_state(model_name, offset),
                      lambda state: set_shared_state(model_name, state))
 
 
 def get_site_api(model_name, site_id):
-    return SiteAPI(lambda: get_site_state(model_name, site_id),
-                   lambda: get_site_cavity(model_name, site_id),
+    return SiteAPI(lambda offset=0: get_site_state(model_name, site_id, offset),
+                   lambda offset=0: get_site_cavity(model_name, site_id, offset),
                    lambda state: set_site_state(model_name, site_id, state),
                    lambda: get_shared_state(model_name))
 
