@@ -42,7 +42,8 @@ class Model:
         prior_api.set_site_state(state)
 
     def run_iterations(self, n_iter=5):
-        raise NotImplementedError("")
+        for _ in range(n_iter):
+            self.run_iteration()
 
     def run_iteration(self):
         raise NotImplementedError("")
@@ -89,7 +90,7 @@ class Model:
         else:
             return True
 
-    def run_until_converged(self, tolerance):
-        self.run_iteration()
+    def run_until_converged(self, tolerance=0.1):
+        self.run_iterations(2)
         while not self.is_converged(tolerance):
             self.run_iteration()
