@@ -27,20 +27,20 @@ class Server:
 
     def store_updated_state(self, updated_state, site_states):
         self.api.set_shared_state(updated_state)
-        for w_id, w_state in site_states.items():
-            if w_id == "prior":
+        for s_id, site_state in site_states.items():
+            if s_id == "prior":
                 continue
-            if w_state is None:
-                self.api.set_site_cavity(w_id, updated_state)
+            if site_state is None:
+                self.api.set_site_cavity(s_id, updated_state)
             else:
-                site_cavity = updated_state / w_state
-                self.api.set_site_cavity(w_id, site_cavity)
+                site_cavity = updated_state / site_state
+                self.api.set_site_cavity(s_id, site_cavity)
 
     def set_new_site_cavities(self, updated_state):
         site_ids = self.api.get_site_ids()
         new_site_ids = {x for x in site_ids if self.api.get_site_cavity(x) is None}
-        for w_id in new_site_ids:
-            self.api.set_site_cavity(w_id, updated_state)
+        for s_id in new_site_ids:
+            self.api.set_site_cavity(s_id, updated_state)
 
     def run_step(self):
         shared_state = self.api.get_shared_state()

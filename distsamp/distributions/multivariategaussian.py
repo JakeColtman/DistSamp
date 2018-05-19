@@ -12,6 +12,9 @@ class MultivariateGaussianDistribution(Distribution):
         self.eta, self.llambda = eta, llambda
         self.mu, self.cov = None, None
 
+    def distance_from(self, other):
+        return np.power(np.sum(np.power(self.mean - other.mean, 2)), 0.5)
+
     def to_dict(self):
         return {"family": self.family, "eta": self.eta, "llambda": self.llambda}
 

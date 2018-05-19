@@ -44,6 +44,9 @@ class Model:
     def run_iterations(self, n_iter=5):
         raise NotImplementedError("")
 
+    def run_iteration(self):
+        raise NotImplementedError("")
+
     def serialize(self):
         return pickle.dumps(self)
 
@@ -76,9 +79,17 @@ class Model:
 
         return ModelAPI(s_api, site_apis)
 
-    def is_converged(self):
-        pass
+    def is_converged(self, tolerance=0.1):
+        updated_state = self.model_api.server_api.get_shared_state()
+        new_state = self.model_api.server_api.get_shared_state(offset=1)
+        for variable in updated_state.variables:
+            if updated_state[variable].distance_from(new_state[variable]) > tolerance:
+                print("{} not converged".format(variable))
+                return False
+        else:
+            return True
 
-    def run_until_converged(self):
-        while not self.is_converged():
+    def run_until_converged(self, tolerance):
+        self.run_iteration()
+        while not self.is_converged(tolerance):
             self.run_iteration()

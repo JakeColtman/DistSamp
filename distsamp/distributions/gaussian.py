@@ -15,6 +15,9 @@ class GaussianDistribution(Distribution):
     def to_dict(self):
         return {"family": self.family, "eta": self.eta, "llambda": self.llambda}
 
+    def distance_from(self, other):
+        return abs(self.mean - other.mean)
+
     @property
     def mean(self):
         if self.mu is None:

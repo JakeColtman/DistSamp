@@ -11,6 +11,9 @@ class GammaDistribution(Distribution):
         self.family = "gamma"
         self.a, self.b = alpha, beta
 
+    def distance_from(self, other):
+        return abs(self.to_scipy().mean() - self.to_scipy().mean())
+
     def __truediv__(self, other: 'GammaDistribution'):
         if self.family != other.family:
             raise ValueError("Operations only meaningful between distributions in the same family, found {} and {}".format(self.family, other.family))
