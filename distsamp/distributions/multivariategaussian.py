@@ -31,6 +31,10 @@ class MultivariateGaussianDistribution(Distribution):
         self.cov = np.linalg.inv(self.llambda)
         self.mu = np.dot(self.cov, self.eta)
 
+    def to_scipy(self):
+        from scipy.stats import multivariate_normal
+        return multivariate_normal(self.mean, self.covariance)
+
     @staticmethod
     def from_expectation_parameters(mean: np.ndarray, covariance: np.ndarray) -> 'MultivariateGaussianDistribution':
         llambda = np.linalg.inv(covariance)
