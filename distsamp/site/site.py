@@ -14,7 +14,7 @@ class Site:
     Primarily focused on approximating the site distribution given the cavity provided by the Server
 
 
-    Attributes
+    Parameters
     ---------
     api: distsamp.site.api.spark.SiteAPI
            API to allow the site to interact with the rest of the system
@@ -76,14 +76,14 @@ class Site:
         return pickle.dumps(self)
 
 
-def sites_from_local_dataframe(model_name, dataframe: pd.DataFrame, partition_key: str, f_approximate_tilted: Callable[[Iterable, State], State], damping) -> Iterable[Site]:
+def sites_from_local_dataframe(model_name, dataframe: pd.DataFrame, partition_key: str, f_approximate_tilted: Callable[[Iterable, State], State], damping) -> List[Site]:
     partition_values = dataframe[partition_key].unique()
     data_list = [LocalData(dataframe[dataframe[partition_key] == key]) for key in partition_values]
     site_apis = [register_site(model_name) for _ in partition_values]
     return [Site(site_api, data, f_approximate_tilted, damping) for (data, site_api) in zip(data_list, site_apis)]
 
 
-def varying_sites_from_local_dataframe(model_name, dataframe: pd.DataFrame, partition_key: str, f_site: Callable[[Any], Site]) -> Iterable[Site]:
+def varying_sites_from_local_dataframe(model_name, dataframe: pd.DataFrame, partition_key: str, f_site: Callable[[Any], Site]) -> List[Site]:
     partition_values = dataframe[partition_key].unique()
     partition_dataframes = [dataframe[dataframe[partition_key] == key] for key in partition_values]
     return [f_site(data) for data in partition_dataframes]

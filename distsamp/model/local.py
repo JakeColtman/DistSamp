@@ -8,17 +8,17 @@ from distsamp.server.server import Server
 class LocalModel(Model):
 
     @staticmethod
-    def f_run_server(model_name):
+    def f_run_server(model_name) -> None:
         server_api = get_server_api(model_name)
         server = Server(server_api)
         server.run()
 
-    def ensure_server_running(self):
+    def ensure_server_running(self) -> None:
         if not self.running:
             server_process = Process(target=self.f_run_server, args=(self.model_name,))
             server_process.start()
 
-    def run_iteration(self):
+    def run_iteration(self) -> None:
         self.ensure_server_running()
         print("Running iteration")
         with Pool(len(self.sites)) as p:
@@ -26,7 +26,7 @@ class LocalModel(Model):
             p.map(self.run_site_iteration, serialized_sites)
 
     @staticmethod
-    def run_site_iteration(serialized_site):
+    def run_site_iteration(serialized_site) -> None:
         import dill as pickle
         site = pickle.loads(serialized_site)
         site.run_iteration()
@@ -34,7 +34,7 @@ class LocalModel(Model):
 
 class SerialLocalModel(Model):
 
-    def run_iteration(self):
+    def run_iteration(self) -> None:
         server_api = get_server_api(self.model_name)
         server = Server(server_api)
         server.run_step()
@@ -42,6 +42,6 @@ class SerialLocalModel(Model):
         for site in self.sites:
             site.run_iteration()
 
-    def run_iterations(self, n_iter=5):
+    def run_iterations(self, n_iter: int=5) -> None:
         for _ in range(n_iter):
             self.run_iteration()

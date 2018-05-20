@@ -12,23 +12,24 @@ POOL = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
 class Model:
     """
-        Represents the whole model
-        Ties together multiple data sources into a coherent whole.
-        In particular:
-            * setting of prior
-            * bringing together multiple data sources
+    Represents the whole model
+    Ties together multiple data sources into a coherent whole.
+    In particular:
+        * setting of prior
+        * bringing together multiple data sources
 
-        Parameters
-        ----------
-        model_name - the name of the model, will be used in all serialization
-        prior - State - prior distributions for all variables in model
-                        hard requirement that all variables be present
-        data_list - all of the data sources to be used in the model
-                    purely convenience, other data sources can be dynamically added during the model run
-
+    Parameters
+    ---------
+    model_name: str
+           the name of the model - can be arbitrary str as long as it's consistent across all elements of the model
+    prior: distsamp.state.state.State
+           Prior distributions for all variables in the model
+    sites: List[distsamp.site.site.Site]
+           A list of sites used in the model.
+           There's no requirement that this is either exhaustive or immutable although either makes running the model easier
     """
 
-    def __init__(self, model_name: str, prior: State, sites: Iterable[Site]):
+    def __init__(self, model_name: str, prior: State, sites: List[Site]):
         self.model_name = model_name
         self.prior = prior
         self.sites = sites
@@ -37,18 +38,18 @@ class Model:
         self.running = False
 
     @staticmethod
-    def set_prior(model_name: str, state: State):
+    def set_prior(model_name: str, prior: State) -> None:
         prior_api = register_named_site(model_name, "prior")
-        prior_api.set_site_state(state)
+        prior_api.set_site_state(prior)
 
-    def run_iterations(self, n_iter=5):
+    def run_iterations(self, n_iter:int =5):
         for _ in range(n_iter):
             self.run_iteration()
 
     def run_iteration(self):
         raise NotImplementedError("")
 
-    def serialize(self):
+    def serialize(self) -> bytes:
         return pickle.dumps(self)
 
     def serialize_complete_model(self) -> bytes:
@@ -80,7 +81,7 @@ class Model:
 
         return ModelAPI(s_api, site_apis)
 
-    def is_converged(self, tolerance=0.1):
+    def is_converged(self, tolerance=0.1) -> bool:
         updated_state = self.model_api.server_api.get_shared_state()
         new_state = self.model_api.server_api.get_shared_state(offset=1)
         for variable in updated_state.variables:
@@ -90,7 +91,7 @@ class Model:
         else:
             return True
 
-    def run_until_converged(self, tolerance=0.1):
+    def run_until_converged(self, tolerance: float=0.1) -> None:
         self.run_iterations(2)
         while not self.is_converged(tolerance):
             self.run_iteration()

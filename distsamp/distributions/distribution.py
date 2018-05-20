@@ -9,16 +9,16 @@ class Distribution:
     e.g. Gaussian, Gamma
     """
 
-    def __truediv__(self, other: 'Distribution'):
+    def __truediv__(self, other: 'Distribution') -> 'Distribution':
         raise NotImplementedError("")
 
-    def __mul__(self, other: Union[float, 'Distribution']):
+    def __mul__(self, other: Union[float, 'Distribution']) -> 'Distribution':
         raise NotImplementedError("")
 
-    def __eq__(self, other: 'Distribution'):
+    def __eq__(self, other: 'Distribution') -> 'Distribution':
         raise NotImplementedError("")
 
-    def serialize(self):
+    def serialize(self) -> bytes:
         return pickle.dumps(self)
 
     def to_dict(self):
