@@ -6,7 +6,24 @@ from distsamp.distributions.distribution import Distribution
 
 class State:
     """
-    Representation of distributions over a number of different variables
+    A `State` ties together distributions over different variables into a single unit
+    Its too main purposes are:
+        - to maintain a set of variables the model uses
+        - to allow easy coordination of distributions
+
+    All interactions with `Distribution`s should be intermediated through a `State` object
+
+    Parameters
+    ----------
+    distributions : Mapping[str, Distribution]
+        A map from the name of a variable to a distribution over that variable
+
+    Attributes
+    ----------
+    distributions :  Mapping[str, Distribution]
+        A map from the name of a variable to a distribution over that variable
+    variables : Set[str]
+        The set of variables names the `State` covers
     """
 
     def __init__(self, distributions: Mapping[str, Distribution]):
