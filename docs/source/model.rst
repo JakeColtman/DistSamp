@@ -3,22 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to DistSamp's documentation!
+Model
 ====================================
+
+Model sites over Site and Server
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
-   model
-   server
-   site
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. automodapi:: distsamp.model
 

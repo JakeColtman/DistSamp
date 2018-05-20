@@ -11,7 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-
+   model
+   server
+   site
 
 Indices and tables
 ==================
