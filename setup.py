@@ -11,5 +11,6 @@ setup(name='distsamp',
             "seaborn",
             "scipy",
             "matplotlib",
-            "numpy"
+            "numpy",
+            "dill"
       ])
