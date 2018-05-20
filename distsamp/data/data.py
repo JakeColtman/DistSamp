@@ -6,6 +6,14 @@ from distsamp.state.state import State
 
 
 class Data:
+    """
+    Encapsulates data to allow operations to be run across multiple data sources
+    Contains the logic of how to apply the approximating method to the data
+
+    Should be subclassed into concrete implementations, for example:
+        - LocalData
+        - SparkData
+    """
 
     def __init__(self):
         pass
