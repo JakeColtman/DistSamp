@@ -133,7 +133,17 @@
             
   <div class="section" id="server">
 <h1>Server<a class="headerlink" href="#server" title="Permalink to this headline">¶</a></h1>
-<p>Server is server</p>
+<p>The role of the server is to take care of allowing the <cite>Site`s to work together.  It takes care of both aggregating the `Site</cite> approximations into a complete posterior and providing the <a href="#id1"><span class="problematic" id="id2">`</span></a>Site`s with their cavity distributions.</p>
+<p>Architecturally, the <cite>Server</cite> is completely decoupled away from the running of any <cite>Site</cite>.  As long as the <cite>Server</cite> can talk to the underlying redis DB, then it can run from any location.</p>
+<dl class="docutils">
+<dt>It&#8217;s clear that the <cite>Server</cite> is a potential choke point for the whole system, if it can&#8217;t keep up with <cite>Site</cite> updates, then no communication between <a href="#id3"><span class="problematic" id="id4">`</span></a>Site`s is possible.  This problem is offset by a number of factors:</dt>
+<dd><ul class="first last simple">
+<li>for most use cases their will be relatively few <a href="#id5"><span class="problematic" id="id6">`</span></a>Site`s</li>
+<li>the computation of the <cite>Server</cite> is very low compared to that done by <a href="#id7"><span class="problematic" id="id8">`</span></a>Site`s</li>
+<li>the <cite>Server</cite> component can be horizontally scaled by adding more instances</li>
+</ul>
+</dd>
+</dl>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul class="simple">

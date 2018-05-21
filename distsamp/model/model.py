@@ -1,5 +1,5 @@
 import pickle
-from typing import Iterable
+from typing import List
 
 import redis
 
