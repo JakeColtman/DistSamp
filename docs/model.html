@@ -157,16 +157,16 @@
             
   <div class="section" id="model">
 <h1>Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h1>
-<p><a href="#id1"><span class="problematic" id="id2">`</span></a>Model`s exist to make the process of coordinating <a href="#id3"><span class="problematic" id="id4">`</span></a>Server`s and <a href="#id5"><span class="problematic" id="id6">`</span></a>Site`s easier.  They are extremely useful for running models where all of the data is known ahead of time and can be easy encapsulated in data classes.  Conveniently, this is most use cases.</p>
+<p><code class="docutils literal"><span class="pre">Models</span></code> exist to make the process of coordinating <code class="docutils literal"><span class="pre">Servers</span></code> and <code class="docutils literal"><span class="pre">Sites</span></code> easier.  They are extremely useful for running models where all of the data is known ahead of time and can be easy encapsulated in data classes.  Conveniently, this is most use cases.</p>
 <p>Models require three pieces of information:</p>
 <blockquote>
 <div><ul class="simple">
 <li>the name of the model</li>
 <li>a prior to use</li>
-<li>a list of <a href="#id7"><span class="problematic" id="id8">`</span></a>Site`s contained in the model</li>
+<li>a list of <code class="docutils literal"><span class="pre">Sites</span></code> contained in the model</li>
 </ul>
 </div></blockquote>
-<p>Based on this information, <a href="#id9"><span class="problematic" id="id10">`</span></a>Model`s allow us to a number of ways to run approximations</p>
+<p>Based on this information, <code class="docutils literal"><span class="pre">Models</span></code> allow us to a number of ways to run approximations</p>
 <blockquote>
 <div><ul class="simple">
 <li>run single iterations</li>
@@ -174,7 +174,7 @@
 <li>run until convergence</li>
 </ul>
 </div></blockquote>
-<p>Models don’t know anything about how <cite>Site`s run their own approximations, so they can’t control where the approximations are run, but different `Model</cite> classes coordinate the <cite>Site</cite> approximation in different ways depending on use case:</p>
+<p>Models don’t know anything about how <code class="docutils literal"><span class="pre">Sites</span></code> run their own approximations, so they can’t control where the approximations are run, but different <code class="docutils literal"><span class="pre">Model</span></code> classes coordinate the <code class="docutils literal"><span class="pre">Site</span></code> approximation in different ways depending on use case:</p>
 <blockquote>
 <div><ul class="simple">
 <li>local server, serial updating steps =&gt; useful for debugging and testing</li>
