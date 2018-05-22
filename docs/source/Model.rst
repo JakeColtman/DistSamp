@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Model
-====================================
+=====
 
 `Model`s exist to make the process of coordinating `Server`s and `Site`s easier.  They are extremely useful for running models where all of the data is known ahead of time and can be easy encapsulated in data classes.  Conveniently, this is most use cases.
 
@@ -27,9 +27,6 @@ Models don't know anything about how `Site`s run their own approximations, so th
     - spark server, parallel updating steps => useful if your only infrastructure is a spark cluster
 
 .. autoclass:: distsamp.model.model.Model
-
-
-Contents:
 
 .. toctree::
    :maxdepth: 2

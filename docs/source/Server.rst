@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Server
-====================================
+======
 
 The role of the server is to take care of allowing the ``Sites`` to work together.  It takes care of both aggregating the ``Site`` approximations into a complete posterior and providing the ``Sites`` with their cavity distributions.
 
@@ -19,7 +19,6 @@ It's clear that the ``Server`` is a potential choke point for the whole system, 
 
 .. autoclass:: distsamp.server.server.Server
 
-Contents:
 
 .. toctree::
    :maxdepth: 2

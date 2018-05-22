@@ -4,14 +4,13 @@
    contain the root `toctree` directive.
 
 Data
-====================================
+====
 
 The ``Data`` class encapsulates the data associated with a ``Site``.  Its main purpose is to provide a consistent way to run approximation methods on different sources of data, e.g. Spark or pandas dataframes.  This way, a ``Site`` can deal with data in an abstracted way.  Indeed, ``Models`` can be composed out of wildly varying sources of data.
 
 .. autoclass:: distsamp.data.data.Data
 
-Contents:
 
 .. toctree::
-:maxdepth: 2
+   :maxdepth: 2
 

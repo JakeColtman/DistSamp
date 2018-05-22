@@ -4,11 +4,9 @@
    contain the root `toctree` directive.
 
 Site
-====================================
+====
 
 Site is a site
-
-Contents:
 
 .. toctree::
    :maxdepth: 2

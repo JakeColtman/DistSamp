@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to DistSamp’s documentation! &mdash; DistSamp 1.0.0 documentation</title>
+  <title>DistSamp &mdash; DistSamp 1.0.0 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Model" href="model.html" /> 
+    <link rel="next" title="Quickstart" href="Quickstart.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -83,10 +83,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="model.html">Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="server.html">Server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="site.html">Site</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Server.html">Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Site.html">Site</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Data.html">Data</a></li>
 </ul>
 
             
@@ -132,7 +133,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>Welcome to DistSamp’s documentation!</li>
+      <li>DistSamp</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -151,33 +152,34 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="welcome-to-distsamp-s-documentation">
-<h1>Welcome to DistSamp’s documentation!<a class="headerlink" href="#welcome-to-distsamp-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="distsamp">
+<h1>DistSamp<a class="headerlink" href="#distsamp" title="Permalink to this headline">¶</a></h1>
+<p>DistSamp is a library for running Bayesian analysis at scale.  It allows us to use methods like MCMC and VI on data sets which are too large to either fit in memory or be computed in reasonable time.</p>
+<div class="section" id="how-it-works">
+<h2>How it works:<a class="headerlink" href="#how-it-works" title="Permalink to this headline">¶</a></h2>
+<p>DistSamp works by approximating the full posterior with a factorization.  The posterior is broken into the product of a prior and a set of sites.  Each site is approximated independently, using the the remaining components of the factorization as a prior.</p>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="model.html">Model</a><ul class="simple">
+<li class="toctree-l1"><a class="reference internal" href="Quickstart.html">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Quickstart.html#installation">Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="server.html">Server</a><ul class="simple">
+<li class="toctree-l1"><a class="reference internal" href="Model.html">Model</a><ul class="simple">
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="site.html">Site</a><ul class="simple">
+<li class="toctree-l1"><a class="reference internal" href="Server.html">Server</a><ul class="simple">
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a><ul class="simple">
+<li class="toctree-l1"><a class="reference internal" href="Site.html">Site</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Data.html">Data</a><ul class="simple">
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
-</ul>
 </div>
 
 
@@ -188,7 +190,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="model.html" class="btn btn-neutral float-right" title="Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="Quickstart.html" class="btn btn-neutral float-right" title="Quickstart" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
