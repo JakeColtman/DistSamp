@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -23,24 +25,21 @@
   
 
   
-  
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-    <link rel="top" title="DistSamp 1.0.0 documentation" href="index.html"/>
-        <link rel="next" title="Server" href="server.html"/>
-        <link rel="prev" title="Welcome to DistSamp’s documentation!" href="index.html"/> 
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Server" href="server.html" />
+    <link rel="prev" title="Welcome to DistSamp’s documentation!" href="index.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -81,7 +80,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Model</a><ul class="simple">
 </ul>
 </li>
@@ -98,34 +100,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">DistSamp</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DistSamp</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Model</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Model</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/model.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/model.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -150,7 +172,7 @@
 <li>run until convergence</li>
 </ul>
 </div></blockquote>
-<p>Models don&#8217;t know anything about how <cite>Site`s run their own approximations, so they can&#8217;t control where the approximations are run, but different `Model</cite> classes coordinate the <cite>Site</cite> approximation in different ways depending on use case:</p>
+<p>Models don’t know anything about how <cite>Site`s run their own approximations, so they can’t control where the approximations are run, but different `Model</cite> classes coordinate the <cite>Site</cite> approximation in different ways depending on use case:</p>
 <blockquote>
 <div><ul class="simple">
 <li>local server, serial updating steps =&gt; useful for debugging and testing</li>
@@ -158,24 +180,46 @@
 <li>spark server, parallel updating steps =&gt; useful if your only infrastructure is a spark cluster</li>
 </ul>
 </div></blockquote>
+<dl class="class">
+<dt id="distsamp.model.model.Model">
+<em class="property">class </em><code class="descclassname">distsamp.model.model.</code><code class="descname">Model</code><span class="sig-paren">(</span><em>model_name: str, prior: distsamp.state.state.State, sites: typing.List[distsamp.site.site.Site]</em><span class="sig-paren">)</span><a class="headerlink" href="#distsamp.model.model.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the whole model
+Ties together multiple data sources into a coherent whole.
+In particular:</p>
+<blockquote>
+<div><ul class="simple">
+<li>setting of prior</li>
+<li>bringing together multiple data sources</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>model_name: str</dt>
+<dd>the name of the model - can be arbitrary str as long as it’s consistent across all elements of the model</dd>
+<dt>prior: distsamp.state.state.State</dt>
+<dd>Prior distributions for all variables in the model</dd>
+<dt>sites: List[distsamp.site.site.Site]</dt>
+<dd>A list of sites used in the model.
+There’s no requirement that this is either exhaustive or immutable although either makes running the model easier</dd>
+</dl>
+</dd></dl>
+
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
-<ul class="simple">
-</ul>
 </div>
 </div>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="server.html" class="btn btn-neutral float-right" title="Server" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="server.html" class="btn btn-neutral float-right" title="Server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Welcome to DistSamp’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Welcome to DistSamp’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -188,7 +232,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -207,15 +251,17 @@
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'1.0.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
@@ -224,14 +270,11 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -23,24 +25,21 @@
   
 
   
-  
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-    <link rel="top" title="DistSamp 1.0.0 documentation" href="index.html"/>
-        <link rel="next" title="Site" href="site.html"/>
-        <link rel="prev" title="Model" href="model.html"/> 
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Site" href="site.html" />
+    <link rel="prev" title="Model" href="model.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -81,7 +80,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Server</a><ul class="simple">
 </ul>
@@ -98,34 +100,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">DistSamp</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DistSamp</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Server</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Server</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/server.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/server.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -135,32 +157,45 @@
 <h1>Server<a class="headerlink" href="#server" title="Permalink to this headline">¶</a></h1>
 <p>The role of the server is to take care of allowing the <code class="docutils literal"><span class="pre">Sites</span></code> to work together.  It takes care of both aggregating the <code class="docutils literal"><span class="pre">Site</span></code> approximations into a complete posterior and providing the <code class="docutils literal"><span class="pre">Sites</span></code> with their cavity distributions.</p>
 <p>Architecturally, the <code class="docutils literal"><span class="pre">Server</span></code> is completely decoupled away from the running of any <code class="docutils literal"><span class="pre">Site</span></code>.  As long as the <code class="docutils literal"><span class="pre">Server</span></code> can talk to the underlying redis DB, then it can run from any location.</p>
-<p>It&#8217;s clear that the <code class="docutils literal"><span class="pre">Server</span></code> is a potential choke point for the whole system, if it can&#8217;t keep up with <code class="docutils literal"><span class="pre">Site</span></code> updates, then no communication between <code class="docutils literal"><span class="pre">Sites</span></code> is possible.  This problem is offset by a number of factors:</p>
+<p>It’s clear that the <code class="docutils literal"><span class="pre">Server</span></code> is a potential choke point for the whole system, if it can’t keep up with <code class="docutils literal"><span class="pre">Site</span></code> updates, then no communication between <code class="docutils literal"><span class="pre">Sites</span></code> is possible.  This problem is offset by a number of factors:</p>
 <blockquote>
 <div><ul class="simple">
-<li>for most use cases their will be relatively few <code class="docutils literal"><span class="pre">Sites</span></code></li>
+<li>for most use cases there will be relatively few <code class="docutils literal"><span class="pre">Sites</span></code></li>
 <li>the computation of the <code class="docutils literal"><span class="pre">Server</span></code> is very low compared to that done by <code class="docutils literal"><span class="pre">Sites</span></code></li>
 <li>the <code class="docutils literal"><span class="pre">Server</span></code> component can be horizontally scaled by adding more instances</li>
 </ul>
 </div></blockquote>
+<dl class="class">
+<dt id="distsamp.server.server.Server">
+<em class="property">class </em><code class="descclassname">distsamp.server.server.</code><code class="descname">Server</code><span class="sig-paren">(</span><em>api: distsamp.api.redis.ServerAPI</em><span class="sig-paren">)</span><a class="headerlink" href="#distsamp.server.server.Server" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates the posterior server, the component which combines the information from the sites together
+Responsible for:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Maintaining an approximation to the global likihood</li>
+<li>Calculating the site cavities</li>
+<li>Handling new sites as they come online</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
-<ul class="simple">
-</ul>
 </div>
 </div>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="site.html" class="btn btn-neutral float-right" title="Site" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="site.html" class="btn btn-neutral float-right" title="Site" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="model.html" class="btn btn-neutral" title="Model" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="model.html" class="btn btn-neutral" title="Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -173,7 +208,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -192,15 +227,17 @@
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'1.0.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
@@ -209,14 +246,11 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

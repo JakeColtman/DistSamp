@@ -13,5 +13,5 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-.. automodapi:: distsamp.site
+.. autoclass:: distsamp.site.site.Site
 

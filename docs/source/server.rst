@@ -16,6 +16,9 @@ It's clear that the ``Server`` is a potential choke point for the whole system, 
     * the computation of the ``Server`` is very low compared to that done by ``Sites``
     * the ``Server`` component can be horizontally scaled by adding more instances
 
+
+.. autoclass:: distsamp.server.server.Server
+
 Contents:
 
 .. toctree::

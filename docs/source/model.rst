@@ -26,10 +26,10 @@ Models don't know anything about how `Site`s run their own approximations, so th
     - local server, parallel updating steps => useful for quick running locally or on a cluster
     - spark server, parallel updating steps => useful if your only infrastructure is a spark cluster
 
+.. autoclass:: distsamp.model.model.Model
+
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
-
-.. autoclass:: distsamp.model.model.Model
