@@ -21,7 +21,7 @@ Contents:
    :maxdepth: 2
 
    Quickstart
-   Model
-   Server
-   Site
-   Data
+   model
+   server
+   site
+   data
